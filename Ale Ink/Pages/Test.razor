@@ -1,0 +1,42 @@
+﻿@page "/test"
+@using Ale_Ink.Shared.Models
+@inject HttpServices.NoteHttpService NoteService
+
+
+
+<h3>Campaign Notes</h3>
+
+<ul>
+    @foreach (var note in Notes)
+    {
+        <li>@note.CreatedAt.ToString("g"): @note.Content</li>
+    }
+</ul>
+
+<div>
+    <textarea @bind="NewNoteContent" rows="3" placeholder="Enter your note here..."></textarea>
+    <br>
+    <button @onclick="SubmitNote">Add Note</button>
+</div>
+
+@code {
+    private List<Note> Notes = new();
+    private string NewNoteContent = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        Notes = await NoteService.GetAllNotesAsync();
+    }
+
+    private async Task SubmitNote()
+    {
+        if (!string.IsNullOrWhiteSpace(NewNoteContent))
+        {
+            var newNote = new Note { Content = NewNoteContent, CreatedAt = DateTime.UtcNow };
+            await NoteService.AddNoteAsync(newNote);
+            NewNoteContent = "";
+            Notes = await NoteService.GetAllNotesAsync(); // Refresh notes list
+        }
+    }
+}
+

@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Ale Ink\Ale_Ink.csproj" />
+    <ProjectReference Include="..\Ale_Ink.Shared\Ale_Ink.Shared.csproj" />
   </ItemGroup>
 
 </Project>

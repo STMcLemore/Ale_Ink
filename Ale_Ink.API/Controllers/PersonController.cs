@@ -1,4 +1,4 @@
-﻿using Ale_Ink.Models;
+﻿using Ale_Ink.Shared.Models;
 using Ale_Ink.Repositories;
 using Microsoft.AspNetCore.Mvc;
 

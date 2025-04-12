@@ -1,5 +1,5 @@
-﻿using Ale_Ink.Models;
-using Ale_Ink.Repositories;
+﻿using Ale_Ink.Shared.Models;
+using Ale_Ink.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ale_Ink.API.Controllers
@@ -8,19 +8,19 @@ namespace Ale_Ink.API.Controllers
     [Route("api/[controller]")]
     public class ItemController : ControllerBase
     {
-        private readonly IGenericRepository<Item> _itemRepository;
+        private readonly ItemService _itemService;
 
-        public ItemController(IGenericRepository<Item> itemRepository)
+        public ItemController(ItemService itemService)
         {
-            _itemRepository = itemRepository;
+            _itemService = itemService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Item>>> GetAllItemsObjects()
+        public async Task<ActionResult<IEnumerable<Item>>> GetAllItems()
         {
             try
             {
-                var result = await _itemRepository.GetAllAsync();
+                var result = await _itemService.GetAllItemsAsync();
                 return Ok(result);
             }
             catch (Exception ex)
@@ -34,7 +34,7 @@ namespace Ale_Ink.API.Controllers
         {
             try
             {
-                var note = await _itemRepository.GetByIdAsync(id);
+                var note = await _itemService.GetItemByIdAsync(id);
 
                 if (note == null)
                 {
@@ -50,7 +50,7 @@ namespace Ale_Ink.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Item>> PostItem(Item item)
+        public async Task<ActionResult<Item>> AddItem(Item item)
         {
             try
             {
@@ -59,7 +59,7 @@ namespace Ale_Ink.API.Controllers
                     return BadRequest("Note data is missing.");
                 }
 
-                await _itemRepository.AddAsync(item);
+                await _itemService.AddItemAsync(item);
                 return Ok(item);
             }
             catch (Exception ex)
@@ -73,7 +73,7 @@ namespace Ale_Ink.API.Controllers
         {
             try
             {
-                await _itemRepository.UpdateAsync(item);
+                await _itemService.UpdateItemAsync(id, item);
                 return Ok();
             }
             catch (Exception ex)
@@ -83,17 +83,17 @@ namespace Ale_Ink.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteItem(object id)
+        public async Task<IActionResult> DeleteItem(int id)
         {
             try
             {
-                var note = await _itemRepository.GetByIdAsync(id);
+                var note = await _itemService.GetItemByIdAsync(id);
                 if (note == null)
                 {
                     return NotFound();
                 }
 
-                await _itemRepository.DeleteAsync(note);
+                await _itemService.DeleteItemAsync(id);
                 return Ok();
             }
             catch (Exception ex)

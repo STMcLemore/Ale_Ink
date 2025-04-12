@@ -1,4 +1,4 @@
-﻿using Ale_Ink.Models;
+﻿using Ale_Ink.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ale_Ink.API.Data

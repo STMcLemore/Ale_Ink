@@ -1,4 +1,6 @@
-﻿namespace Ale_Ink.Models
+﻿using System.Collections.Generic;
+
+namespace Ale_Ink.Shared.Models
 {
     public class Person
     {

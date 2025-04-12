@@ -1,45 +1,51 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Ale_Ink.Models;
-using Ale_Ink.Repositories;
+﻿using Ale_Ink.Shared.Models;
+using Ale_Ink.API.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ale_Ink.API.Services
 {
-    public class NoteService
+
+    public class NoteService(AppDbContext context)
     {
-        private readonly IGenericRepository<Note> _noteRepository;
+        private readonly AppDbContext _context = context;
 
-        public NoteService(IGenericRepository<Note> noteRepository)
+        public async Task<IEnumerable<Note>> GetAllNotesAsync() =>
+            await _context.Notes.ToListAsync();
+
+        public async Task<Note?> GetNoteByIdAsync(int id) =>
+            await _context.Notes.SingleOrDefaultAsync(x => x.NoteId == id);
+
+        public async Task<Note> AddNoteAsync(Note note)
         {
-            _noteRepository = noteRepository;
+            _context.Notes.Add(note);
+            await _context.SaveChangesAsync();
+            return note;
         }
 
-        public async Task<IEnumerable<Note>> GetAllNotes()
+        public async Task UpdateNoteAsync(int id, Note note)
         {
-            return await _noteRepository.GetAllAsync();
-        }
-
-        public async Task<Note> GetNoteById(int id)
-        {
-            return await _noteRepository.GetByIdAsync(id);
-        }
-
-        public async Task AddNoteAsync(Note note)
-        {
-            await _noteRepository.AddAsync(note);
-        }
-
-        public async Task UpdateNoteAsync(Note note)
-        {
-            await _noteRepository.UpdateAsync(note);
+            if (_context.Notes.Any(x => x.NoteId == id))
+            {
+                _context.Notes.Update(note);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new InvalidOperationException($"Unable to process the operation.");
+            }
         }
 
         public async Task DeleteNoteAsync(int id)
         {
-            var note = await _noteRepository.GetByIdAsync(id);
+            var note = _context.Notes.Single(x => x.NoteId == id);
             if (note != null)
             {
-                await _noteRepository.DeleteAsync(note);
+                _context.Notes.Remove(note);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new InvalidOperationException($"Unable to process the operation.");
             }
         }
     }

@@ -18,4 +18,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Ale_Ink.Shared\Ale_Ink.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

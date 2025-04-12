@@ -1,5 +1,5 @@
-﻿using Ale_Ink.Models;
-using Ale_Ink.Repositories;
+﻿using Ale_Ink.Shared.Models;
+using Ale_Ink.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ale_Ink.API.Controllers
@@ -8,11 +8,11 @@ namespace Ale_Ink.API.Controllers
     [Route("api/[controller]")]
     public class NoteController : ControllerBase
     {
-        private readonly IGenericRepository<Note> _noteRepository;
+        private readonly NoteService _noteService;
 
-        public NoteController(IGenericRepository<Note> noteRepository)
+        public NoteController(NoteService noteService)
         {
-            _noteRepository = noteRepository;
+            _noteService = noteService;
         }
 
         [HttpGet]
@@ -20,7 +20,7 @@ namespace Ale_Ink.API.Controllers
         {
             try
             {
-                var result = await _noteRepository.GetAllAsync();
+                var result = await _noteService.GetAllNotesAsync();
                 return Ok(result);
             }
             catch (Exception ex)
@@ -34,7 +34,7 @@ namespace Ale_Ink.API.Controllers
         {
             try
             {
-                var note = await _noteRepository.GetByIdAsync(id);
+                var note = await _noteService.GetNoteByIdAsync(id);
 
                 if (note == null)
                 {
@@ -59,7 +59,7 @@ namespace Ale_Ink.API.Controllers
                     return BadRequest("Note data is missing.");
                 }
 
-                await _noteRepository.AddAsync(note);
+                await _noteService.AddNoteAsync(note);
                 return Ok(note);
             }
             catch (Exception ex)
@@ -73,7 +73,17 @@ namespace Ale_Ink.API.Controllers
         {
             try
             {
-                await _noteRepository.UpdateAsync(note);
+                if (note == null)
+                {
+                    return BadRequest("Note data is missing.");
+                }
+
+                if (id != note.NoteId)
+                {
+                    return BadRequest("Note ID mismatch.");
+                }
+
+                await _noteService.UpdateNoteAsync(id, note);
                 return Ok();
             }
             catch (Exception ex)
@@ -83,17 +93,11 @@ namespace Ale_Ink.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteNote(object id)
+        public async Task<IActionResult> DeleteNote(int id)
         {
             try
             {
-                var note = await _noteRepository.GetByIdAsync(id);
-                if (note == null)
-                {
-                    return NotFound();
-                }
-
-                await _noteRepository.DeleteAsync(note);
+                await _noteService.DeleteNoteAsync(id);
                 return Ok();
             }
             catch (Exception ex)
