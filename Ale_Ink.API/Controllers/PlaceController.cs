@@ -1,5 +1,5 @@
 ﻿using Ale_Ink.Shared.Models;
-using Ale_Ink.Repositories;
+using Ale_Ink.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ale_Ink.API.Controllers
@@ -8,11 +8,11 @@ namespace Ale_Ink.API.Controllers
     [Route("api/[controller]")]
     public class PlaceController : ControllerBase
     {
-        private readonly IGenericRepository<Place> _placeRepository;
+        private readonly IPlaceService _placeService;
 
-        public PlaceController(IGenericRepository<Place> placeRepository)
+        public PlaceController(IPlaceService placeService)
         {
-            _placeRepository = placeRepository;
+            _placeService = placeService;
         }
 
         [HttpGet]
@@ -20,7 +20,7 @@ namespace Ale_Ink.API.Controllers
         {
             try
             {
-                var result = await _placeRepository.GetAllAsync();
+                var result = await _placeService.GetAllPlacesAsync();
                 return Ok(result);
             }
             catch (Exception ex)
@@ -34,7 +34,7 @@ namespace Ale_Ink.API.Controllers
         {
             try
             {
-                var place = await _placeRepository.GetByIdAsync(id);
+                var place = await _placeService.GetPlaceByIdAsync(id);
 
                 if (place == null)
                 {
@@ -59,7 +59,7 @@ namespace Ale_Ink.API.Controllers
                     return BadRequest("Place data is missing.");
                 }
 
-                await _placeRepository.AddAsync(place);
+                await _placeService.AddPlaceAsync(place);
                 return Ok(place);
             }
             catch (Exception ex)
@@ -73,7 +73,7 @@ namespace Ale_Ink.API.Controllers
         {
             try
             {
-                await _placeRepository.UpdateAsync(place);
+                await _placeService.UpdatePlaceAsync(id, place);
                 return Ok();
             }
             catch (Exception ex)
@@ -83,17 +83,17 @@ namespace Ale_Ink.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePlace(object id)
+        public async Task<IActionResult> DeletePlace(int id)
         {
             try
             {
-                var place = await _placeRepository.GetByIdAsync(id);
+                var place = await _placeService.GetPlaceByIdAsync(id);
                 if (place == null)
                 {
                     return NotFound();
                 }
 
-                await _placeRepository.DeleteAsync(place);
+                await _placeService.DeletePlaceAsync(id);
                 return Ok();
             }
             catch (Exception ex)

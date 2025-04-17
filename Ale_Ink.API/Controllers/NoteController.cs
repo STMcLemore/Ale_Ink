@@ -8,9 +8,9 @@ namespace Ale_Ink.API.Controllers
     [Route("api/[controller]")]
     public class NoteController : ControllerBase
     {
-        private readonly NoteService _noteService;
+        private readonly INoteService _noteService;
 
-        public NoteController(NoteService noteService)
+        public NoteController(INoteService noteService)
         {
             _noteService = noteService;
         }

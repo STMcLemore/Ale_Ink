@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Ale_Ink.API.Services
 {
 
-    public class NoteService(AppDbContext context)
+    public class NoteService(AppDbContext context) : INoteService
     {
         private readonly AppDbContext _context = context;
 
@@ -49,4 +49,5 @@ namespace Ale_Ink.API.Services
             }
         }
     }
+
 }

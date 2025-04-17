@@ -1,5 +1,5 @@
 ﻿using Ale_Ink.Shared.Models;
-using Ale_Ink.Repositories;
+using Ale_Ink.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ale_Ink.API.Controllers
@@ -8,11 +8,11 @@ namespace Ale_Ink.API.Controllers
     [Route("api/[controller]")]
     public class PersonController : ControllerBase
     {
-        private readonly IGenericRepository<Person> _personRepository;
+        private readonly IPersonService _personService;
 
-        public PersonController(IGenericRepository<Person> personRepository)
+        public PersonController(IPersonService personService)
         {
-            _personRepository = personRepository;
+            _personService = personService;
         }
 
         [HttpGet]
@@ -20,7 +20,7 @@ namespace Ale_Ink.API.Controllers
         {
             try
             {
-                var result = await _personRepository.GetAllAsync();
+                var result = await _personService.GetAllPersonsAsync();
                 return Ok(result);
             }
             catch (Exception ex)
@@ -34,7 +34,7 @@ namespace Ale_Ink.API.Controllers
         {
             try
             {
-                var person = await _personRepository.GetByIdAsync(id);
+                var person = await _personService.GetPersonByIdAsync(id);
 
                 if (person == null)
                 {
@@ -59,7 +59,7 @@ namespace Ale_Ink.API.Controllers
                     return BadRequest("Person data is missing.");
                 }
 
-                await _personRepository.AddAsync(person);
+                await _personService.AddPersonAsync(person);
                 return Ok(person);
             }
             catch (Exception ex)
@@ -73,7 +73,7 @@ namespace Ale_Ink.API.Controllers
         {
             try
             {
-                await _personRepository.UpdateAsync(person);
+                await _personService.UpdatePersonAsync(id, person);
                 return Ok();
             }
             catch (Exception ex)
@@ -83,17 +83,17 @@ namespace Ale_Ink.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePerson(object id)
+        public async Task<IActionResult> DeletePerson(int id)
         {
             try
             {
-                var person = await _personRepository.GetByIdAsync(id);
+                var person = await _personService.GetPersonByIdAsync(id);
                 if (person == null)
                 {
                     return NotFound();
                 }
 
-                await _personRepository.DeleteAsync(person);
+                await _personService.UpdatePersonAsync(id, person);
                 return Ok();
             }
             catch (Exception ex)
