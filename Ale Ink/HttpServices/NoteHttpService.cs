@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Json;
 using Ale_Ink.Shared.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ale_Ink.HttpServices
 {
@@ -105,6 +106,19 @@ namespace Ale_Ink.HttpServices
             else
             {
                 throw new Exception($"Error fetching notes for place with ID {placeId}: {response.ReasonPhrase}");
+            }
+        }
+
+        public async Task<List<Note>> GetNotesByKeywordAsync(string keyword)
+        {
+            var response = await _httpClient.GetAsync($"api/Note/search/{keyword}");
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<List<Note>>();
+            }
+            else
+            {
+                throw new Exception($"Error fetching notes with keyword '{keyword}': {response.ReasonPhrase}");
             }
         }
     }

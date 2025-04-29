@@ -48,6 +48,12 @@ namespace Ale_Ink.API.Services
                 throw new InvalidOperationException($"Unable to process the operation.");
             }
         }
+        public async Task<List<Note>> GetNotesByKeywordAsync(string keyword)
+        {
+            return await _context.Notes
+                .Where(n => n.Content.Contains(keyword))
+                .ToListAsync();
+        }
     }
 
 }

@@ -9,5 +9,6 @@ namespace Ale_Ink.API.Services
             Task<Note> AddNoteAsync(Note note);
             Task UpdateNoteAsync(int id, Note note);
             Task DeleteNoteAsync(int id);
+            Task<List<Note>> GetNotesByKeywordAsync(string keyword);
         }
 }

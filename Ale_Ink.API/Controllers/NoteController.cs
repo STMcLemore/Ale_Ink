@@ -105,6 +105,21 @@ namespace Ale_Ink.API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-        
+
+        [HttpGet("search/{keyword}")]
+        public async Task<ActionResult<IEnumerable<Note>>> SearchNotes(string keyword)
+        {
+            try
+            {
+                var notes = await _noteService.GetNotesByKeywordAsync(keyword);
+                return Ok(notes);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+
     }
 }
