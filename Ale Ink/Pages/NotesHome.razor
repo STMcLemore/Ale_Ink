@@ -32,6 +32,12 @@
         margin: 0.25rem 0;
         width: 100%;
         max-width: 600px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 0.75rem;
+        background-color: #f9f9f9;
+        position: relative;
     }
 
     .note-input {
@@ -40,7 +46,7 @@
         background: #fff;
         padding: 1rem;
         width: 100%;
-        max-width: 600px;
+        max-width: 1000px;
         margin: 0 auto;
         box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
         box-sizing: border-box;
@@ -55,6 +61,93 @@
     button {
         margin-top: 0.5rem;
     }
+
+    .note-box {
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        width: 100%;
+        max-width: 900px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: box-shadow 0.2s ease;
+    }
+
+        .note-box:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+    .note-timestamp {
+        font-size: 0.85rem;
+        color: #888;
+        margin-bottom: 0.5rem;
+    }
+
+    .note-content {
+        font-size: 1rem;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .note-box-wrapper {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 0.75rem;
+        width: 100%;
+        max-width: 900px;
+        box-sizing: border-box;
+    }
+
+    .note-action-button {
+        position: absolute;
+        top: -5px;
+        left: -28px;
+        width: 28px;
+        height: 27px;
+        background-color: #e0e0e0;
+        border: 1px solid #bbb;
+        border-radius: 4px;
+        font-weight: bold;
+        color: #333;
+        cursor: pointer;
+        box-shadow: 1px 1px 4px rgba(0,0,0,0.1);
+        transition: background-color 0.2s ease;
+    }
+
+        .note-action-button:hover {
+            background-color: #d4d4d4;
+        }
+
+    /* .note-box {
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 1rem;
+        padding-left: 1.5rem;
+        width: 100%;
+        max-width: 600px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: box-shadow 0.2s ease;
+    }
+
+        .note-box:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+    .note-timestamp {
+        font-size: 0.85rem;
+        color: #888;
+        margin-bottom: 0.5rem;
+    }
+
+    .note-content {
+        font-size: 1rem;
+        white-space: pre-wrap;
+    } */
+
+
 </style>
 
 
@@ -64,12 +157,20 @@
     </div>
 
     <div class="notes-list">
-        <ul>
-            @foreach (var note in Notes)
-            {
-                <li class="note-item">@note.CreatedAt.ToString("g"): @note.Content</li>
-            }
-        </ul>
+        @foreach (var note in Notes)
+        {
+            <div class="note-box-wrapper">
+                <button class="note-action-button" @onclick="() => OnNoteAction(note)">
+                    +
+                </button>
+                <div class="note-box">
+                    <div class="note-timestamp">@note.CreatedAt.ToString("g")</div>
+                    <div class="note-content">@note.Content</div>
+                </div>
+            </div>
+        }
+
+
     </div>
 
     <div class="note-input">
@@ -110,5 +211,12 @@
             Notes = await NoteService.GetAllNotesAsync(); // Refresh notes list
         }
     }
+
+    private void OnNoteAction(Note note)
+    {
+        // Placeholder logic
+        Console.WriteLine($"Button clicked for note: {note.NoteId}");
+    }
+
 }
 
