@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ale_Ink.API", "Ale_Ink.API\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ale_Ink.Shared", "Ale_Ink.Shared\Ale_Ink.Shared.csproj", "{5C687021-6470-41B8-BCD6-F8E28C0EE440}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ale_Ink.Tests", "Ale_Ink.Tests\Ale_Ink.Tests.csproj", "{4DE422F3-4C99-4BB4-806B-60DE88E176F4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{5C687021-6470-41B8-BCD6-F8E28C0EE440}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5C687021-6470-41B8-BCD6-F8E28C0EE440}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5C687021-6470-41B8-BCD6-F8E28C0EE440}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DE422F3-4C99-4BB4-806B-60DE88E176F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DE422F3-4C99-4BB4-806B-60DE88E176F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DE422F3-4C99-4BB4-806B-60DE88E176F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DE422F3-4C99-4BB4-806B-60DE88E176F4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
