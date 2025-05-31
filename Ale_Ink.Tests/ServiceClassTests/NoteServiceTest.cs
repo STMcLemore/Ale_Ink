@@ -3,7 +3,7 @@ using Ale_Ink.API.Data;
 using Ale_Ink.Shared.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace Ale_Ink.Tests
+namespace Ale_Ink.Tests.ServiceClassTests
 {
     [TestClass]
     public sealed class NoteServiceTest
@@ -37,7 +37,6 @@ namespace Ale_Ink.Tests
         }
 
 
-
         [TestMethod]
         public async Task GetAllNotesAsync_ReturnsAllNotes()
         {
@@ -63,6 +62,7 @@ namespace Ale_Ink.Tests
             var result = await service.GetNoteByIdAsync(1);
 
             // Assert
+            Assert.IsNotNull(result);
             Assert.AreEqual(1, result.NoteId);
         }
 
@@ -72,8 +72,10 @@ namespace Ale_Ink.Tests
             //Arrange
             var mockContext = GetMockedDbContextWithNotes();
             var service = new NoteService(mockContext);
+
             // Act
-            var result = await service.GetNoteByIdAsync(999);
+            var result = await service.GetNoteByIdAsync(999); // Non-existing ID
+
             // Assert
             Assert.IsNull(result);
         }
