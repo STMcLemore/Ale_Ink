@@ -8,9 +8,9 @@ namespace Ale_Ink.API.Controllers
     [Route("api/[controller]")]
     public class ItemController : ControllerBase
     {
-        private readonly ItemService _itemService;
+        private readonly IItemService _itemService;
 
-        public ItemController(ItemService itemService)
+        public ItemController(IItemService itemService)
         {
             _itemService = itemService;
         }
@@ -73,6 +73,16 @@ namespace Ale_Ink.API.Controllers
         {
             try
             {
+                if (item == null)
+                {
+                    return BadRequest("Item data is missing.");
+                }
+
+                if (id != item.ItemId)
+                {
+                    return BadRequest("Item ID mismatch.");
+                }
+
                 await _itemService.UpdateItemAsync(id, item);
                 return Ok();
             }

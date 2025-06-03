@@ -19,8 +19,8 @@ namespace Ale_Ink.Tests.ServiceClassTests
 
             // Seed test notes
             context.Notes.AddRange(
-                new Note { NoteId = 1, Content = "Test Note 1"},
-                new Note { NoteId = 2, Content = "Another Note"}
+                new Note { NoteId = 1, Content = "Test Note 1" },
+                new Note { NoteId = 2, Content = "Another Note" }
             );
             context.SaveChanges();
 
@@ -93,6 +93,63 @@ namespace Ale_Ink.Tests.ServiceClassTests
 
             // Assert
             Assert.AreEqual(newNote.Content, result.Content);
+        }
+
+        [TestMethod]
+        public async Task UpdateNoteAsync_ExistingNote_UpdatesNote()
+        {
+            // Arrange
+
+            var mockContext = GetMockedDbContextWithNotes();
+            var service = new NoteService(mockContext);
+            var existingNote = await service.GetNoteByIdAsync(1);
+            existingNote.Content = "Updated Content";
+
+            // Act
+            await service.UpdateNoteAsync(existingNote.NoteId, existingNote);
+
+            // Assert
+            var updatedNote = await service.GetNoteByIdAsync(1);
+            Assert.AreEqual("Updated Content", updatedNote.Content);
+        }
+
+        [TestMethod]
+        public async Task UpdateNoteAsync_NonExistingNote_ThrowsException()
+        {
+            // Arrange
+            var mockContext = GetMockedDbContextWithNotes();
+            var service = new NoteService(mockContext);
+            var nonExistingNote = new Note { NoteId = 999 }; // Non-existing ID
+
+            // Act & Assert
+            await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => service.UpdateNoteAsync(nonExistingNote.NoteId, nonExistingNote));
+        }
+
+        [TestMethod]
+        public async Task DeleteNoteAsync_ExistingNote_DeletesNote()
+        {
+            // Arrange
+            var mockContext = GetMockedDbContextWithNotes();
+            var service = new NoteService(mockContext);
+            var existingNote = await service.GetNoteByIdAsync(1);
+
+            // Act
+            await service.DeleteNoteAsync(existingNote.NoteId);
+
+            // Assert
+            var deletedNote = await service.GetNoteByIdAsync(existingNote.NoteId);
+            Assert.IsNull(deletedNote);
+        }
+
+        [TestMethod]
+        public async Task DeleteNoteAsync_NonExistingNote_ThrowsException()
+        {
+            // Arrange
+            var mockContext = GetMockedDbContextWithNotes();
+            var service = new NoteService(mockContext);
+
+            // Act & Assert
+            await Assert.ThrowsExceptionAsync<InvalidOperationException>(() => service.DeleteNoteAsync(999)); // Non-existing ID
         }
     }
 }

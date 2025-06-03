@@ -1,8 +1,4 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Ale_Ink.API.Controllers;
 using Ale_Ink.API.Services;
@@ -11,7 +7,7 @@ using Ale_Ink.Shared.Models;
 namespace Ale_Ink.Tests;
 
 [TestClass]
-public class NoteControllerTest
+public sealed class NoteControllerTest
 {
     private Mock<INoteService> _mockService;
     private NoteController _controller;
@@ -70,6 +66,22 @@ public class NoteControllerTest
 
         // Assert
         Assert.IsInstanceOfType(result.Result, typeof(NotFoundObjectResult));
+    }
+
+    [TestMethod]
+    public async Task  PostNote_ValidNote_ReturnsOk()
+    {
+        // Arrange
+        var note = new Note { NoteId = 1, Content = "New Note" };
+        _mockService.Setup(service => service.AddNoteAsync(note)).ReturnsAsync(note);
+
+        // Act
+        var result = await _controller.PostNote(note);
+
+        // Assert
+        var okResult = result.Result as OkObjectResult;
+        Assert.IsNotNull(okResult);
+        Assert.AreEqual(note, okResult.Value);
     }
 
     [TestMethod]
