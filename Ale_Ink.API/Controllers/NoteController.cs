@@ -100,6 +100,10 @@ namespace Ale_Ink.API.Controllers
                 await _noteService.DeleteNoteAsync(id);
                 return Ok();
             }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { Message = $"Note with ID {id} not found.", Details = ex.Message });
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");

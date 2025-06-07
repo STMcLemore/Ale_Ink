@@ -97,14 +97,18 @@ namespace Ale_Ink.API.Controllers
         {
             try
             {
-                var note = await _itemService.GetItemByIdAsync(id);
-                if (note == null)
-                {
-                    return NotFound();
-                }
+                //var note = await _itemService.GetItemByIdAsync(id);
+                //if (note == null)
+                //{
+                //    return NotFound();
+                //}
 
                 await _itemService.DeleteItemAsync(id);
                 return Ok();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { Message = $"Item with ID {id} not found.", Details = ex.Message });
             }
             catch (Exception ex)
             {

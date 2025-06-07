@@ -138,6 +138,19 @@ public sealed class NoteControllerTest
     }
 
     [TestMethod]
+    public async Task DeleteNote_NonExistingId_ReturnsNotFound()
+    {
+        // Arrange
+        _mockService.Setup(service => service.DeleteNoteAsync(999)).Throws(new KeyNotFoundException());
+
+        // Act
+        var result = await _controller.DeleteNote(999);
+
+        // Assert
+        Assert.IsInstanceOfType(result, typeof(NotFoundObjectResult));
+    }
+
+    [TestMethod]
     public async Task SearchNotes_ValidKeyword_ReturnsNotes()
     {
         // Arrange

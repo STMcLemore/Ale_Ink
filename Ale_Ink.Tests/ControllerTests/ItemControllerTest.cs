@@ -124,4 +124,17 @@ public sealed class ItemControllerTest
         // Assert
         Assert.IsInstanceOfType(result, typeof(OkResult));
     }
+
+    [TestMethod]
+    public async Task DeleteItem_NonExistingId_ReturnsNotFound()
+    {
+        // Arrange
+        _mockService.Setup(service => service.DeleteItemAsync(999)).Throws(new KeyNotFoundException());
+
+        // Act
+        var result = await _controller.DeleteItem(999);
+
+        // Assert
+        Assert.IsInstanceOfType(result, typeof(NotFoundObjectResult));
+    }
 }

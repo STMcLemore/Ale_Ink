@@ -73,6 +73,16 @@ namespace Ale_Ink.API.Controllers
         {
             try
             {
+                if (person == null)
+                {
+                    return BadRequest("Note data is missing.");
+                }
+
+                if (id != person.PersonId)
+                {
+                    return BadRequest("Note ID mismatch.");
+                }
+
                 await _personService.UpdatePersonAsync(id, person);
                 return Ok();
             }
@@ -87,14 +97,12 @@ namespace Ale_Ink.API.Controllers
         {
             try
             {
-                var person = await _personService.GetPersonByIdAsync(id);
-                if (person == null)
-                {
-                    return NotFound();
-                }
-
-                await _personService.UpdatePersonAsync(id, person);
+                await _personService.DeletePersonAsync(id);
                 return Ok();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { Message = $"Note with ID {id} not found.", Details = ex.Message });
             }
             catch (Exception ex)
             {
