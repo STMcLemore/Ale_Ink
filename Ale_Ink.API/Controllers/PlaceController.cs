@@ -73,6 +73,16 @@ namespace Ale_Ink.API.Controllers
         {
             try
             {
+                if (place == null)
+                {
+                    return BadRequest("Place data is missing.");
+                }
+
+                if (id != place.PlaceId)
+                {
+                    return BadRequest("Place ID mismatch.");
+                }
+
                 await _placeService.UpdatePlaceAsync(id, place);
                 return Ok();
             }
@@ -87,14 +97,12 @@ namespace Ale_Ink.API.Controllers
         {
             try
             {
-                var place = await _placeService.GetPlaceByIdAsync(id);
-                if (place == null)
-                {
-                    return NotFound();
-                }
-
                 await _placeService.DeletePlaceAsync(id);
                 return Ok();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { Message = $"Place with ID {id} not found.", Details = ex.Message });
             }
             catch (Exception ex)
             {
