@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Json;
+using Ale_Ink.Shared.DTOs;
 using Ale_Ink.Shared.Models;
 
 namespace Ale_Ink.HttpServices
@@ -50,6 +51,20 @@ namespace Ale_Ink.HttpServices
                 throw new Exception($"Error adding item: {response.ReasonPhrase}");
             }
         }
+
+        public async Task<Item> AddItemFromNoteAsync(ItemFromNoteDTO dto)
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/Item/from-note", dto);
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<Item>();
+            }
+            else
+            {
+                throw new Exception($"Error adding item: {response.ReasonPhrase}");
+            }
+        }
+
 
         public async Task UpdateItemAsync(int id, Item item)
         {

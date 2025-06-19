@@ -1,126 +1,11 @@
 ﻿@page "/"
 @using Ale_Ink.Shared.Models
+@using Ale_Ink.Shared.DTOs
 @inject HttpServices.NoteHttpService NoteService
+@inject HttpServices.ItemHttpService ItemService
+@inject HttpServices.PersonHttpService PersonService
+@inject HttpServices.PlaceHttpService PlaceService
 @inherits LayoutComponentBase
-
-
-
- <style>
-    .page-container {
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        box-sizing: border-box;
-    }
-
-    .header {
-        text-align: center;
-        padding: 0.5rem 0;
-        border-bottom: 1px solid #ccc;
-    }
-
-    .notes-list {
-        flex: 1;
-        overflow-y: auto;
-        padding: 1rem;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .note-item {
-        margin: 0.25rem 0;
-        width: 100%;
-        max-width: 600px;
-        box-sizing: border-box;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        padding: 0.75rem;
-        background-color: #f9f9f9;
-        position: relative;
-    }
-
-    .note-input {
-        position: sticky;
-        bottom: 0;
-        background: #fff;
-        padding: 1rem;
-        width: 100%;
-        max-width: 1000px;
-        margin: 0 auto;
-        box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
-        box-sizing: border-box;
-    }
-
-    textarea {
-        width: 100%;
-        resize: none;
-        box-sizing: border-box;
-    }
-
-    button {
-        margin-top: 0.5rem;
-    }
-
-    .note-box {
-        background-color: #f9f9f9;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        padding: 1rem;
-        margin-bottom: 0.75rem;
-        width: 100%;
-        max-width: 900px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        transition: box-shadow 0.2s ease;
-    }
-
-        .note-box:hover {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-    .note-timestamp {
-        font-size: 0.85rem;
-        color: #888;
-        margin-bottom: 0.5rem;
-    }
-
-    .note-content {
-        font-size: 1rem;
-        white-space: pre-wrap;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-    }
-
-    .note-box-wrapper {
-        position: relative;
-        display: inline-block;
-        margin-bottom: 0.75rem;
-        width: 100%;
-        max-width: 900px;
-        box-sizing: border-box;
-    }
-
-    .note-action-button {
-        position: absolute;
-        top: -5px;
-        left: -28px;
-        width: 28px;
-        height: 27px;
-        background-color: #e0e0e0;
-        border: 1px solid #bbb;
-        border-radius: 4px;
-        font-weight: bold;
-        color: #333;
-        cursor: pointer;
-        box-shadow: 1px 1px 4px rgba(0,0,0,0.1);
-        transition: background-color 0.2s ease;
-    }
-
-        .note-action-button:hover {
-            background-color: #d4d4d4;
-        }
-
-</style>
 
 
 <div class="page-container">
@@ -148,9 +33,44 @@
     <div class="note-input">
         <textarea @bind="NewNoteContent" rows="3" placeholder="Enter your note here..."></textarea>
         <br />
-        <button @onclick="SubmitNote">Add Note</button>
+        <button class="btn btn-primary mt-2" @onclick="SubmitNote">Add Note</button>
     </div>
 </div>
+
+@if (Visible)
+{
+    <div class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Assign Note</h5>
+                    <button type="button" class="btn-close" @onclick="Cancel"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Note:</strong> @NoteToAssign?.Content</p>
+
+                    <input class="form-control mb-2" @bind="EntityName" placeholder="Enter name..." />
+
+                    <select class="form-select mb-2" @bind="SelectedType">
+                        <option value="">Select type</option>
+                        <option value="Person">Person</option>
+                        <option value="Item">Item</option>
+                        <option value="Place">Place</option>
+                    </select>
+
+                    @if (ErrorMessage != null)
+                    {
+                        <div class="text-danger">@ErrorMessage</div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+                    <button class="btn btn-primary" @onclick="SaveAssignment">Assign</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 @code {
     private List<Note> Notes = new();
@@ -158,6 +78,13 @@
     private List<Person> People = new();
     private List<Place> Places = new();
     private string NewNoteContent = "";
+    private bool Visible = false;
+    private Note? NoteToAssign;
+
+
+    private string EntityName = "";
+    private string SelectedType = "";
+    private string? ErrorMessage;
 
 
     protected override async Task OnInitializedAsync()
@@ -186,8 +113,53 @@
 
     private void OnNoteAction(Note note)
     {
-        // Placeholder logic
-        Console.WriteLine($"Button clicked for note: {note.NoteId}");
+        NoteToAssign = note;
+        Visible = true;
+    }
+
+    private async Task SaveAssignment()
+    {
+        if (NoteToAssign == null || string.IsNullOrWhiteSpace(EntityName) || string.IsNullOrWhiteSpace(SelectedType))
+        {
+            ErrorMessage = "All fields are required.";
+            return;
+        }
+
+        ErrorMessage = null;
+
+        try
+        {
+            switch (SelectedType)
+            {
+                case "Person":
+                    await PersonService.AddPersonAsync(new() { Name = EntityName, Notes = new List<Note> { NoteToAssign } });
+                    break;
+                case "Item":
+                    await ItemService.AddItemFromNoteAsync(new ItemFromNoteDTO { Name = EntityName, NoteId = NoteToAssign!.NoteId });
+                    break;
+                case "Place":
+                    await PlaceService.AddPlaceAsync(new() { Name = EntityName, Notes = new List<Note> { NoteToAssign } });
+                    break;
+
+                    return;
+            }
+
+             CloseModal();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to assign: {ex.Message}";
+        }
+    }
+
+    private void Cancel() => CloseModal();
+
+    private void CloseModal()
+    {
+        EntityName = "";
+        SelectedType = "";
+        ErrorMessage = null;
+        Visible = false;
     }
 
 }

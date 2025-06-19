@@ -1,4 +1,5 @@
 ﻿using Ale_Ink.Shared.Models;
+using Ale_Ink.Shared.DTOs;
 using Ale_Ink.API.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,8 +15,25 @@ namespace Ale_Ink.API.Services
         public async Task<Item?> GetItemByIdAsync(int id) =>
             await _context.Items.SingleOrDefaultAsync(x => x.ItemId == id);
 
-        public async Task<Item> AddItemAsync(Item item)
+        //public async Task<Item> AddItemAsync(Item item)
+        //{
+        //    _context.Items.Add(item);
+        //    await _context.SaveChangesAsync();
+        //    return item;
+        //}
+
+        public async Task<Item> AddItemFromNoteAsync(ItemFromNoteDTO dto)
         {
+            var note = await _context.Notes.FindAsync(dto.NoteId);
+            if (note == null)
+            {
+                throw new InvalidOperationException($"Note with ID {dto.NoteId} not found.");
+            }
+
+            var item = new Item
+            {
+                Name = dto.Name
+            };
             _context.Items.Add(item);
             await _context.SaveChangesAsync();
             return item;

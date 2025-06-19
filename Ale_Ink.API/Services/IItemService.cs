@@ -1,4 +1,5 @@
-﻿using Ale_Ink.Shared.Models;
+﻿using Ale_Ink.Shared.DTOs;
+using Ale_Ink.Shared.Models;
 
 namespace Ale_Ink.API.Services
 {
@@ -6,7 +7,8 @@ namespace Ale_Ink.API.Services
     {
         Task<IEnumerable<Item>> GetAllItemsAsync();
         Task<Item?> GetItemByIdAsync(int id);
-        Task<Item> AddItemAsync(Item item);
+        //Task<Item> AddItemAsync(Item item);
+        Task<Item> AddItemFromNoteAsync(ItemFromNoteDTO dto);
         Task UpdateItemAsync(int id, Item item);
         Task DeleteItemAsync(int id);
     }

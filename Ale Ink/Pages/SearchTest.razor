@@ -3,28 +3,36 @@
 @inherits LayoutComponentBase
 @using Ale_Ink.Shared.Models
 
-<h3>SearchTest</h3>
 
-<input @bind="SearchTerm" placeholder="Enter a keyword (e.g., Frodo)" class="form-control" />
-<button class="btn btn-primary mt-2" @onclick="SearchNotes">Search</button>
+<div class="page-container">
+    <div class="header">
+        <h3>Search Notes</h3>
+    </div>
 
-@if (Notes == null)
-{
-    <p>No results yet.</p>
-}
-else if (Notes.Count == 0)
-{
-    <p>No notes found for '@SearchTerm'.</p>
-}
-else
-{
-    <ul class="list-group mt-3">
-        @foreach (var note in Notes)
-        {
-            <li class="list-group-item">@note.CreatedAt.ToString("g"): @note.Content</li>
-        }
-    </ul>
-}
+    <div class="note-input">
+    <input @bind="SearchTerm" placeholder="Enter a keyword (e.g., Frodo)" class="form-control" />
+    <button class="btn btn-primary mt-2" @onclick="SearchNotes">Search</button>
+    </div>
+
+    @if (Notes.Count == 0)
+    {
+        <p>No notes found for '@SearchTerm'.</p>
+    }
+    else
+    {
+        <div class="notes-list">
+            @foreach (var note in Notes)
+            {
+                <div class="note-box-wrapper">
+                   <div class="note-box">
+                     <div class="note-timestamp">@note.CreatedAt.ToString("g")</div>
+                        <div class="note-content">@note.Content</div>
+                   </div>
+                </div>
+            }
+        </div>
+    }
+</div>
 
 @code {
     private string SearchTerm = string.Empty;

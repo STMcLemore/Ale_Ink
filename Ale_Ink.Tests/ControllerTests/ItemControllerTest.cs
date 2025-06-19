@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Ale_Ink.API.Controllers;
 using Ale_Ink.API.Services;
 using Ale_Ink.Shared.Models;
+using Ale_Ink.Shared.DTOs;
 
 namespace Ale_Ink.Tests;
 
@@ -68,34 +69,56 @@ public sealed class ItemControllerTest
         Assert.IsInstanceOfType(result.Result, typeof(NotFoundObjectResult));
     }
 
+    //[TestMethod]
+    //public async Task PostItem_ValidItem_ReturnsOk()
+    //{
+    //    // Arrange
+    //    var item = new Item { ItemId = 1, Name = "Test Item" };
+    //    _mockService.Setup(service => service.AddItemAsync(item)).ReturnsAsync(item);
+
+    //    // Act
+    //    var result = await _controller.AddItem(item);
+
+    //    // Assert
+    //    var okResult = result.Result as OkObjectResult;
+    //    Assert.IsNotNull(okResult);
+    //    Assert.AreEqual(item, okResult.Value);
+    //}
+
     [TestMethod]
-    public async Task PostItem_ValidItem_ReturnsOk()
+    public async Task AddItemFromNote_ReturnsOk_WithCreatedItem()
     {
         // Arrange
-        var item = new Item { ItemId = 1, Name = "Test Item" };
-        _mockService.Setup(service => service.AddItemAsync(item)).ReturnsAsync(item);
+        var dto = new ItemFromNoteDTO { NoteId = 1, Name = "Sting" };
+        var expectedItem = new Item { ItemId = 42, Name = "Sting", Notes = new List<Note> { new Note { NoteId = 1 } } };
+
+        _mockService.Setup(s => s.AddItemFromNoteAsync(dto))
+                    .ReturnsAsync(expectedItem);
 
         // Act
-        var result = await _controller.AddItem(item);
+        var result = await _controller.AddItemFromNote(dto);
 
         // Assert
         var okResult = result.Result as OkObjectResult;
         Assert.IsNotNull(okResult);
-        Assert.AreEqual(item, okResult.Value);
+        Assert.AreEqual(200, okResult.StatusCode);
+        var returnedItem = okResult.Value as Item;
+        Assert.IsNotNull(returnedItem);
+        Assert.AreEqual("Sting", returnedItem.Name);
     }
 
-    [TestMethod]
-    public async Task PostItem_NullItem_ReturnsBadRequest()
-    {
-        // Arrange
-        Item item = null;
+    //[TestMethod]
+    //public async Task PostItem_NullItem_ReturnsBadRequest()
+    //{
+    //    // Arrange
+    //    Item item = null;
 
-        // Act
-        var result = await _controller.AddItem(item);
+    //    // Act
+    //    var result = await _controller.AddItem(item);
 
-        // Assert
-        Assert.IsInstanceOfType(result.Result, typeof(BadRequestObjectResult));
-    }
+    //    // Assert
+    //    Assert.IsInstanceOfType(result.Result, typeof(BadRequestObjectResult));
+    //}
 
     [TestMethod]
     public async Task UpdateItem_IdMismatch_ReturnsBadRequest()

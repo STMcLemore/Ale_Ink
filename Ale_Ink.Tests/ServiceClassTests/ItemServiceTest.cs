@@ -2,6 +2,7 @@ using Ale_Ink.API.Services;
 using Ale_Ink.API.Data;
 using Ale_Ink.Shared.Models;
 using Microsoft.EntityFrameworkCore;
+using Ale_Ink.Shared.DTOs;
 
 namespace Ale_Ink.Tests.ServiceClassTests;
 
@@ -74,20 +75,41 @@ public sealed class ItemServiceTest
         Assert.IsNull(result);
     }
 
+    //[TestMethod]
+    //public async Task AddItemAsync_AddsNewItem()
+    //{
+    //    // Arrange
+    //    var mockContext = GetMockedDbContext();
+    //    var service = new ItemService(mockContext);
+    //    var newItem = new Item { Name = "New Test Item" };
+
+    //    // Act
+    //    var result = await service.AddItemAsync(newItem);
+
+    //    // Assert
+    //    Assert.IsNotNull(result);
+    //    Assert.AreEqual("New Test Item", result.Name);
+    //    Assert.AreEqual(1, mockContext.Items.Count());
+    //}
+
     [TestMethod]
-    public async Task AddItemAsync_AddsNewItem()
+    public async Task AddItemFromNoteAsync_ValidDto_AddsItemLinkedToNote()
     {
         // Arrange
         var mockContext = GetMockedDbContext();
         var service = new ItemService(mockContext);
-        var newItem = new Item { Name = "New Test Item" };
+        var newDto = new ItemFromNoteDTO
+        {
+            NoteId = 1,
+            Name = "Sting"
+        };
 
         // Act
-        var result = await service.AddItemAsync(newItem);
+        var result = await service.AddItemFromNoteAsync(newDto);
 
         // Assert
         Assert.IsNotNull(result);
-        Assert.AreEqual("New Test Item", result.Name);
-        Assert.AreEqual(1, mockContext.Items.Count());
+        Assert.AreEqual("Sting", result.Name);
+        Assert.AreEqual(1, result.Notes.First().NoteId);
     }
 }
