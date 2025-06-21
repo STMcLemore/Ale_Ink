@@ -5,9 +5,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Ale_Ink.API.Services
 {
-    public class ItemService(AppDbContext context)
+    public class ItemService : IItemService
     {
-        private readonly AppDbContext _context = context;
+        private readonly AppDbContext _context;
+
+        public ItemService(AppDbContext context)
+        {
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+        }
 
         public async Task<IEnumerable<Item>> GetAllItemsAsync() =>
             await _context.Items.ToListAsync();
@@ -32,7 +37,8 @@ namespace Ale_Ink.API.Services
 
             var item = new Item
             {
-                Name = dto.Name
+                Name = dto.Name,
+                Notes = new List<Note> { note }
             };
             _context.Items.Add(item);
             await _context.SaveChangesAsync();

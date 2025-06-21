@@ -17,4 +17,6 @@ builder.Services.AddScoped<ItemHttpService>();
 builder.Services.AddScoped<PersonHttpService>();
 builder.Services.AddScoped<PlaceHttpService>();
 
+
+
 await builder.Build().RunAsync();

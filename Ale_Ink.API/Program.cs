@@ -10,7 +10,8 @@ var builder = WebApplication.CreateBuilder(args);
 //Regiatration of the DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"))
+    .EnableSensitiveDataLogging();
 });
 
 // Add services to the container.
@@ -22,7 +23,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<INoteService, NoteService>();
-builder.Services.AddScoped<ItemService, ItemService>();
+builder.Services.AddScoped<IItemService, ItemService>();
+builder.Services.AddScoped<IPersonService, PersonService>();
+builder.Services.AddScoped<IPlaceService, PlaceService>();
 
 
 builder.Services.AddCors(options =>

@@ -96,12 +96,13 @@ public sealed class ItemControllerTest
                     .ReturnsAsync(expectedItem);
 
         // Act
-        var result = await _controller.AddItemFromNote(dto);
+        var actionResult = await _controller.AddItemFromNoteAsync(dto);
 
         // Assert
-        var okResult = result.Result as OkObjectResult;
+        var okResult = actionResult.Result as OkObjectResult;
         Assert.IsNotNull(okResult);
         Assert.AreEqual(200, okResult.StatusCode);
+
         var returnedItem = okResult.Value as Item;
         Assert.IsNotNull(returnedItem);
         Assert.AreEqual("Sting", returnedItem.Name);
