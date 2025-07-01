@@ -1,4 +1,4 @@
-﻿@page "/"
+﻿@page "/itemsNotes"
 @using Ale_Ink.Shared.Models
 @using Ale_Ink.Shared.DTOs
 @inject HttpServices.NoteHttpService NoteService
@@ -10,7 +10,7 @@
 
 <div class="page-container">
     <div class="header">
-        <h3>Campaign Notes</h3>
+        <h3>Item Notes</h3>
     </div>
 
     <div class="notes-list">
@@ -20,41 +20,36 @@
                 <button class="note-action-button" @onclick="() => OnNoteAction(note)">
                     +
                 </button>
-                    <div class="note-box-wrapper">
-                        <button class="note-action-button" @onclick="() => OnNoteAction(note)">
-                            +
-                        </button>
-                            <div class="note-box">
-                                <div class="note-timestamp">@note.CreatedAt.ToString("g")</div>
-                                <div>
-                                    @if (note.Items?.Any() == true)
-                                    {
-                                        <span class="note-category item">Item</span>
-                                    }
-                                    @if (note.People?.Any() == true)
-                                    {
-                                        <span class="note-category person">Person</span>
-                                    }
-                                    @if (note.Places?.Any() == true)
-                                    {
-                                        <span class="note-category place">Place</span>
-                                    }
-                                </div>
-                                <div class="note-content">@note.Content</div>
-                            </div>
+                <div class="note-box-wrapper">
+                    <button class="note-action-button" @onclick="() => OnNoteAction(note)">
+                        +
+                    </button>
+                    <div class="note-box">
+                        <div class="note-timestamp">@note.CreatedAt.ToString("g")</div>
+                        <div>
+                            @if (note.Items?.Any() == true)
+                            {
+                                <span class="note-category item">Item</span>
+                            }
+                            @if (note.People?.Any() == true)
+                            {
+                                <span class="note-category person">Person</span>
+                            }
+                            @if (note.Places?.Any() == true)
+                            {
+                                <span class="note-category place">Place</span>
+                            }
+                        </div>
+                        <div class="note-content">@note.Content</div>
                     </div>
+                </div>
             </div>
         }
 
 
     </div>
+ </div>
 
-    <div class="note-input">
-        <textarea @bind="NewNoteContent" rows="3" placeholder="Enter your note here..."></textarea>
-        <br />
-        <button class="btn btn-primary mt-2" @onclick="SubmitNote">Add Note</button>
-    </div>
-</div>
 
 @if (Visible)
 {
@@ -110,25 +105,15 @@
     {
         try
         {
-            Notes = await NoteService.GetAllNotesAsync();
+            var allNotes = await NoteService.GetAllNotesAsync();
+            Notes = allNotes.Where(n => n.Items != null && n.Items.Any()).ToList();
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error fetching notes: {ex.Message}");
+            Console.WriteLine($"Error fetching item notes: {ex.Message}");
         }
     }
 
-
-    private async Task SubmitNote()
-    {
-        if (!string.IsNullOrWhiteSpace(NewNoteContent))
-        {
-            var newNote = new Note { Content = NewNoteContent, CreatedAt = DateTime.UtcNow };
-            await NoteService.AddNoteAsync(newNote);
-            NewNoteContent = "";
-            Notes = await NoteService.GetAllNotesAsync(); // Refresh notes list
-        }
-    }
 
     private void OnNoteAction(Note note)
     {
@@ -163,7 +148,7 @@
                     return;
             }
 
-             CloseModal();
+            CloseModal();
         }
         catch (Exception ex)
         {
@@ -182,4 +167,3 @@
     }
 
 }
-

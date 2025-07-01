@@ -9,8 +9,14 @@ namespace Ale_Ink.API.Services
     {
         private readonly AppDbContext _context = context;
 
-        public async Task<IEnumerable<Note>> GetAllNotesAsync() =>
-            await _context.Notes.ToListAsync();
+        public async Task<IEnumerable<Note>> GetAllNotesAsync()
+        {
+            return await _context.Notes
+                .Include(n => n.Items)
+                .Include(n => n.People)
+                .Include(n => n.Places)
+                .ToListAsync();
+        }
 
         public async Task<Note?> GetNoteByIdAsync(int id) =>
             await _context.Notes.SingleOrDefaultAsync(x => x.NoteId == id);

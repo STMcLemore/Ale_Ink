@@ -77,6 +77,36 @@ button {
     margin-bottom: 0.5rem;
 }
 
+.note-category {
+    display: inline-block;
+    font-weight: bold;
+    margin-right: 0.5rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    user-select: none;
+}
+
+    .note-category.item {
+        color: #1e90ff; /* Dodger Blue */
+        border: 1px solid #1e90ff;
+        background-color: #e6f0ff;
+    }
+
+    .note-category.person {
+        color: #dc3545; /* Bootstrap Red */
+        border: 1px solid #dc3545;
+        background-color: #f9d6d5;
+    }
+
+    .note-category.place {
+        color: #28a745; /* Bootstrap Green */
+        border: 1px solid #28a745;
+        background-color: #d7f0d8;
+    }
+
+
+
 .note-content {
     font-size: 1rem;
     white-space: pre-wrap;
