@@ -2,8 +2,6 @@
 using Ale_Ink.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using Ale_Ink.Shared.DTOs;
-using Microsoft.EntityFrameworkCore;
-using Ale_Ink.API.Data;
 
 namespace Ale_Ink.API.Controllers
 {
@@ -52,25 +50,6 @@ namespace Ale_Ink.API.Controllers
             }
         }
 
-        //[HttpPost]
-        //public async Task<ActionResult<Item>> AddItem(Item item)
-        //{
-        //    try
-        //    {
-        //        if (item == null)
-        //        {
-        //            return BadRequest("Note data is missing.");
-        //        }
-
-        //        await _itemService.AddItemAsync(item);
-        //        return Ok(item);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine($"Error adding item: {ex.Message}");
-        //        return StatusCode(500, $"Internal server error: {ex.Message}");
-        //    }
-        //}
 
         [HttpPost("from-note")]
         public async Task<ActionResult<Item>> AddItemFromNoteAsync(ItemFromNoteDTO dto)

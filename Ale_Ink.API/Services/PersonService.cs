@@ -1,18 +1,38 @@
 ﻿using Ale_Ink.Shared.Models;
+using Ale_Ink.Shared.DTOs;
 using Ale_Ink.API.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ale_Ink.API.Services
 {
-    public class PersonService(AppDbContext context) : IPersonService
+    public class PersonService : IPersonService
     {
-        private readonly AppDbContext _context = context;
+        private readonly AppDbContext _context;
+
+        public PersonService(AppDbContext context)
+        {
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+        }
+
         public async Task<IEnumerable<Person>> GetAllPersonsAsync() =>
             await _context.People.ToListAsync();
+
         public async Task<Person?> GetPersonByIdAsync(int id) =>
             await _context.People.SingleOrDefaultAsync(x => x.PersonId == id);
-        public async Task<Person> AddPersonAsync(Person person)
+
+        public async Task<Person> AddPersonFromNoteAsync(PersonFromNoteDTO dto)
         {
+            var note = await _context.Notes.FindAsync(dto.NoteId);
+            if (note == null)
+            {
+                throw new InvalidOperationException($"Note with ID {dto.NoteId} not found.");
+            }
+
+            var person = new Person
+            {
+                Name = dto.Name,
+                Notes = new List<Note> { note }
+            };
             _context.People.Add(person);
             await _context.SaveChangesAsync();
             return person;

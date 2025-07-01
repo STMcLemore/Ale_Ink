@@ -1,6 +1,7 @@
 ﻿using Ale_Ink.Shared.Models;
 using Ale_Ink.API.Services;
 using Microsoft.AspNetCore.Mvc;
+using Ale_Ink.Shared.DTOs;
 
 namespace Ale_Ink.API.Controllers
 {
@@ -49,18 +50,17 @@ namespace Ale_Ink.API.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<ActionResult<Place>> PostPlace(Place place)
+        [HttpPost("from-note")]
+        public async Task<ActionResult<Place>> AddPlaceFromNoteAsync(PlaceFromNoteDTO dto)
         {
             try
             {
-                if (place == null)
-                {
-                    return BadRequest("Place data is missing.");
-                }
-
-                await _placeService.AddPlaceAsync(place);
+                var place = await _placeService.AddPlaceFromNoteAsync(dto);
                 return Ok(place);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {

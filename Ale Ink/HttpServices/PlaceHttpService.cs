@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Json;
+using Ale_Ink.Shared.DTOs;
 using Ale_Ink.Shared.Models;
 
 namespace Ale_Ink.HttpServices
@@ -38,16 +39,16 @@ namespace Ale_Ink.HttpServices
             }
         }
 
-        public async Task<Place> AddPlaceAsync(Place place)
+        public async Task<Place> AddPlaceFromNoteAsync(PlaceFromNoteDTO dto)
         {
-            var response = await _httpClient.PostAsJsonAsync("api/Place", place);
+            var response = await _httpClient.PostAsJsonAsync("api/Place/from-note", dto);
             if (response.IsSuccessStatusCode)
             {
                 return await response.Content.ReadFromJsonAsync<Place>();
             }
             else
             {
-                throw new Exception($"Error adding place: {response.ReasonPhrase}");
+                throw new Exception($"Error adding place from note: {response.ReasonPhrase}");
             }
         }
 

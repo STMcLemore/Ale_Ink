@@ -136,13 +136,13 @@
             switch (SelectedType)
             {
                 case "Person":
-                    await PersonService.AddPersonAsync(new() { Name = EntityName, Notes = new List<Note> { NoteToAssign } });
+                    await PersonService.AddPersonFromNoteAsync(new PersonFromNoteDTO { Name = EntityName, NoteId = NoteToAssign!.NoteId });
                     break;
                 case "Item":
                     await ItemService.AddItemFromNoteAsync(new ItemFromNoteDTO { Name = EntityName, NoteId = NoteToAssign!.NoteId });
                     break;
                 case "Place":
-                    await PlaceService.AddPlaceAsync(new() { Name = EntityName, Notes = new List<Note> { NoteToAssign } });
+                    await PlaceService.AddPlaceFromNoteAsync(new PlaceFromNoteDTO { Name = EntityName, NoteId = NoteToAssign!.NoteId });
                     break;
 
                     return;

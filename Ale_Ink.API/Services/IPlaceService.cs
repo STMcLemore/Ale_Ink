@@ -1,4 +1,5 @@
-﻿using Ale_Ink.Shared.Models;
+﻿using Ale_Ink.Shared.DTOs;
+using Ale_Ink.Shared.Models;
 
 namespace Ale_Ink.API.Services
 {
@@ -6,7 +7,7 @@ namespace Ale_Ink.API.Services
     {
         Task<IEnumerable<Place>> GetAllPlacesAsync();
         Task<Place?> GetPlaceByIdAsync(int id);
-        Task<Place> AddPlaceAsync(Place place);
+        Task<Place> AddPlaceFromNoteAsync(PlaceFromNoteDTO dto);
         Task UpdatePlaceAsync(int id, Place place);
         Task DeletePlaceAsync(int id);
     }

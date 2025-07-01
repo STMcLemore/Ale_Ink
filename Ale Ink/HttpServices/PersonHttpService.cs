@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Json;
+using Ale_Ink.Shared.DTOs;
 using Ale_Ink.Shared.Models;
 
 namespace Ale_Ink.HttpServices
@@ -38,16 +39,16 @@ namespace Ale_Ink.HttpServices
             }
         }
 
-        public async Task<Person> AddPersonAsync(Person person)
+        public async Task<Person> AddPersonFromNoteAsync(PersonFromNoteDTO dto)
         {
-            var response = await _httpClient.PostAsJsonAsync("api/Person", person);
+            var response = await _httpClient.PostAsJsonAsync("api/Person/from-note", dto);
             if (response.IsSuccessStatusCode)
             {
                 return await response.Content.ReadFromJsonAsync<Person>();
             }
             else
             {
-                throw new Exception($"Error adding person: {response.ReasonPhrase}");
+                throw new Exception($"Error adding person from note: {response.ReasonPhrase}");
             }
         }
 

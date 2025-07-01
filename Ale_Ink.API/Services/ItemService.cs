@@ -20,13 +20,6 @@ namespace Ale_Ink.API.Services
         public async Task<Item?> GetItemByIdAsync(int id) =>
             await _context.Items.SingleOrDefaultAsync(x => x.ItemId == id);
 
-        //public async Task<Item> AddItemAsync(Item item)
-        //{
-        //    _context.Items.Add(item);
-        //    await _context.SaveChangesAsync();
-        //    return item;
-        //}
-
         public async Task<Item> AddItemFromNoteAsync(ItemFromNoteDTO dto)
         {
             var note = await _context.Notes.FindAsync(dto.NoteId);

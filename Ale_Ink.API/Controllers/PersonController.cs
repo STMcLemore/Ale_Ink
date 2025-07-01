@@ -1,6 +1,7 @@
 ﻿using Ale_Ink.Shared.Models;
 using Ale_Ink.API.Services;
 using Microsoft.AspNetCore.Mvc;
+using Ale_Ink.Shared.DTOs;
 
 namespace Ale_Ink.API.Controllers
 {
@@ -49,18 +50,17 @@ namespace Ale_Ink.API.Controllers
             }
         }
 
-        [HttpPost]
-        public async Task<ActionResult<Person>> PostPerson(Person person)
+        [HttpPost("from-note")]
+        public async Task<ActionResult<Person>> AddItemFromNoteAsync(PersonFromNoteDTO dto)
         {
             try
             {
-                if (person == null)
-                {
-                    return BadRequest("Person data is missing.");
-                }
-
-                await _personService.AddPersonAsync(person);
+                var person = await _personService.AddPersonFromNoteAsync(dto);
                 return Ok(person);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { Message = ex.Message, Details = "Ensure the note ID exists." });
             }
             catch (Exception ex)
             {
