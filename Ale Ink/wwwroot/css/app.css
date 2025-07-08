@@ -101,3 +101,40 @@ a, .btn-link {
 code {
     color: #c02d76;
 }
+
+.main-content {
+    display: flex;
+    height: calc(100vh - 60px);
+}
+
+.notes-list {
+    flex: 3;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.sidebar {
+    flex: 1;
+    max-width: 250px;
+    border-left: 1px solid #ccc;
+    padding: 1rem;
+    overflow-y: auto;
+    background-color: #f7f7f7;
+}
+
+    .sidebar h5 {
+        margin-bottom: 1rem;
+    }
+
+.sidebar-item {
+    cursor: pointer;
+    padding: 4px 0;
+    color: #007bff;
+    text-decoration: underline;
+}
+
+    .sidebar-item:hover {
+        text-decoration: none;
+    }
+
+

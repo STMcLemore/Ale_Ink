@@ -17,16 +17,11 @@
         @foreach (var note in Notes)
         {
             <div class="note-box-wrapper">
-                <button class="note-action-button" @onclick="() => OnNoteAction(note)">
-                    +
-                </button>
-                <div class="note-box-wrapper">
-                    <button class="note-action-button" @onclick="() => OnNoteAction(note)">
-                        +
-                    </button>
+                   <button class="note-action-button" @onclick="() => OnNoteAction(note)">+</button>
                     <div class="note-box">
-                        <div class="note-timestamp">@note.CreatedAt.ToString("g")</div>
-                        <div>
+                        <div class="note-header">
+                       <div class="note-timestamp">@note.CreatedAt.ToString("g")</div>
+                        <div class="note-category-row">
                             @if (note.Items?.Any() == true)
                             {
                                 <span class="note-category item">Item</span>
@@ -40,9 +35,9 @@
                                 <span class="note-category place">Place</span>
                             }
                         </div>
-                        <div class="note-content">@note.Content</div>
                     </div>
-                </div>
+                    <div class="note-content">@note.Content</div>
+                    </div>
             </div>
         }
 
@@ -83,6 +78,7 @@
                     }
                 </div>
                 <div class="modal-footer">
+                    <button class="btn btn-danger" @onclick="DeleteNote">Delete</button>
                     <button class="btn btn-secondary" @onclick="Cancel">Cancel</button>
                     <button class="btn btn-primary" @onclick="SaveAssignment">Assign</button>
                 </div>
@@ -90,6 +86,7 @@
         </div>
     </div>
 }
+
 
 @code {
     private List<Note> Notes = new();
@@ -99,6 +96,7 @@
     private string NewNoteContent = "";
     private bool Visible = false;
     private Note? NoteToAssign;
+    private string ModalCssClass => Visible ? "modal fade show d-block" : "modal fade";
 
 
     private string EntityName = "";
@@ -127,6 +125,26 @@
             await NoteService.AddNoteAsync(newNote);
             NewNoteContent = "";
             Notes = await NoteService.GetAllNotesAsync(); // Refresh notes list
+        }
+    }
+
+
+    private async Task DeleteNote()
+    {
+        if (NoteToAssign == null)
+        {
+            ErrorMessage = "No note selected for deletion.";
+            return;
+        }
+        try
+        {
+            await NoteService.DeleteNoteAsync(NoteToAssign.NoteId);
+            Notes.Remove(NoteToAssign);
+            CloseModal();
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to delete note: {ex.Message}";
         }
     }
 

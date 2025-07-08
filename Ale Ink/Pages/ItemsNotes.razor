@@ -8,47 +8,62 @@
 @inherits LayoutComponentBase
 
 
-<div class="page-container">
+
+<div class="page-wrapper">
     <div class="header">
         <h3>Item Notes</h3>
     </div>
 
-    <div class="notes-list">
-        @foreach (var note in Notes)
-        {
-            <div class="note-box-wrapper">
-                <button class="note-action-button" @onclick="() => OnNoteAction(note)">
-                    +
-                </button>
-                <div class="note-box-wrapper">
-                    <button class="note-action-button" @onclick="() => OnNoteAction(note)">
-                        +
-                    </button>
-                    <div class="note-box">
-                        <div class="note-timestamp">@note.CreatedAt.ToString("g")</div>
-                        <div>
-                            @if (note.Items?.Any() == true)
-                            {
-                                <span class="note-category item">Item</span>
-                            }
-                            @if (note.People?.Any() == true)
-                            {
-                                <span class="note-category person">Person</span>
-                            }
-                            @if (note.Places?.Any() == true)
-                            {
-                                <span class="note-category place">Place</span>
-                            }
+    <div class="main-content">
+        <div class="notes-section">
+            <div class="notes-list">
+                @foreach (var note in FilteredNotes)
+                {
+                    <div class="note-box-wrapper">
+                        <button class="note-action-button" @onclick="() => OnNoteAction(note)">+</button>
+                        <div class="note-box">
+                            <div class="note-header">
+                                <div class="note-timestamp">@note.CreatedAt.ToString("g")</div>
+                                <div class="note-category-row">
+                                    @if (note.Items?.Any() == true)
+                                    {
+                                        <span class="note-category item">Item</span>
+                                    }
+                                    @if (note.People?.Any() == true)
+                                    {
+                                        <span class="note-category person">Person</span>
+                                    }
+                                    @if (note.Places?.Any() == true)
+                                    {
+                                        <span class="note-category place">Place</span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="note-content">@note.Content</div>
                         </div>
-                        <div class="note-content">@note.Content</div>
                     </div>
-                </div>
+                }
             </div>
-        }
+        </div>
 
-
+        <div class="item-sidebar">
+            <h5>Items</h5>
+            <ul class="list-unstyled">
+                @foreach (var item in Items)
+                {
+                    <li>
+                        <button class="btn btn-link text-start w-100" @onclick="() => FilterByItem(item)">
+                            @item.Name
+                        </button>
+                    </li>
+                }
+            </ul>
+            <button class="btn btn-sm btn-secondary mt-2" @onclick="ClearItemFilter">Clear Filter</button>
+        </div>
     </div>
- </div>
+</div>
+
+
 
 
 @if (Visible)
@@ -94,6 +109,11 @@
     private string NewNoteContent = "";
     private bool Visible = false;
     private Note? NoteToAssign;
+    private List<Note> FilteredNotes => string.IsNullOrEmpty(SelectedItemFilter)
+        ? Notes
+        : Notes.Where(n => n.Items?.Any(i => i.Name == SelectedItemFilter) == true).ToList();
+
+    private string SelectedItemFilter = "";
 
 
     private string EntityName = "";
@@ -107,6 +127,8 @@
         {
             var allNotes = await NoteService.GetAllNotesAsync();
             Notes = allNotes.Where(n => n.Items != null && n.Items.Any()).ToList();
+            Items = await ItemService.GetAllItemsAsync();
+
         }
         catch (Exception ex)
         {
@@ -164,6 +186,16 @@
         SelectedType = "";
         ErrorMessage = null;
         Visible = false;
+    }
+
+    private void FilterByItem(Item item)
+    {
+        SelectedItemFilter = item.Name;
+    }
+
+    private void ClearItemFilter()
+    {
+        SelectedItemFilter = "";
     }
 
 }

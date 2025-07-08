@@ -88,19 +88,19 @@ button {
 }
 
     .note-category.item {
-        color: #1e90ff; /* Dodger Blue */
+        color: #1e90ff; 
         border: 1px solid #1e90ff;
         background-color: #e6f0ff;
     }
 
     .note-category.person {
-        color: #dc3545; /* Bootstrap Red */
+        color: #dc3545; 
         border: 1px solid #dc3545;
         background-color: #f9d6d5;
     }
 
     .note-category.place {
-        color: #28a745; /* Bootstrap Green */
+        color: #28a745; 
         border: 1px solid #28a745;
         background-color: #d7f0d8;
     }
@@ -142,3 +142,78 @@ button {
     .note-action-button:hover {
         background-color: #d4d4d4;
     }
+
+.Note-delete-button {
+    position: absolute;
+    top: -5px;
+    right: -28px;
+    width: 28px;
+    height: 27px;
+    background-color: #f8d7da; 
+    border: 1px solid #f5c6cb; 
+    border-radius: 4px;
+    font-weight: bold;
+    color: #721c24;
+    cursor: pointer;
+    box-shadow: 1px 1px 4px rgba(0,0,0,0.1);
+    transition: background-color 0.2s ease;
+}
+
+    .Note-delete-button:hover {
+        background-color: #f5c6cb; 
+    }
+
+
+
+<style >
+.page-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+.header {
+    padding: 1rem;
+    background-color: #f2f2f2;
+    border-bottom: 1px solid #ccc;
+    text-align: center;
+}
+
+.main-content {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    overflow: hidden;
+}
+
+.notes-section {
+    flex: 3;
+    overflow-y: auto;
+    padding: 1rem;
+}
+
+.item-sidebar {
+    flex: 1;
+    max-width: 250px;
+    background-color: #f8f9fa;
+    border-left: 1px solid #ccc;
+    padding: 1rem;
+    overflow-y: auto;
+    height: 100%;
+}
+
+.note-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.note-category-row {
+    display: flex;
+    gap: 0.5rem;
+}
+
+</style >
+
+
