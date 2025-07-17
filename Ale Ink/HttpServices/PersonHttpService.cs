@@ -4,7 +4,7 @@ using Ale_Ink.Shared.Models;
 
 namespace Ale_Ink.HttpServices
 {
-    public class PersonHttpService
+    public class PersonHttpService : IPersonHttpService
     {
         private readonly HttpClient _httpClient;
 

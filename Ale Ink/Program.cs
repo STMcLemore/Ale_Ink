@@ -12,10 +12,12 @@ builder.Services.AddScoped(sp =>
     new HttpClient { BaseAddress = new Uri("https://localhost:7104/") }
 );
 
-builder.Services.AddScoped<NoteHttpService>();
-builder.Services.AddScoped<ItemHttpService>();
-builder.Services.AddScoped<PersonHttpService>();
-builder.Services.AddScoped<PlaceHttpService>();
+builder.Services.AddScoped<INoteHttpService, NoteHttpService>();
+builder.Services.AddScoped<IItemHttpService, ItemHttpService>();
+builder.Services.AddScoped<IPersonHttpService, PersonHttpService>();
+builder.Services.AddScoped<IPlaceHttpService, PlaceHttpService>();
+builder.Services.AddScoped<NoteAssignmentService>();
+
 
 
 

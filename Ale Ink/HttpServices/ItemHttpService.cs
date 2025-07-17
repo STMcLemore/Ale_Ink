@@ -4,7 +4,7 @@ using Ale_Ink.Shared.Models;
 
 namespace Ale_Ink.HttpServices
 {
-    public class ItemHttpService
+    public class ItemHttpService : IItemHttpService
     {
         private readonly HttpClient _httpClient;
 
@@ -66,13 +66,15 @@ namespace Ale_Ink.HttpServices
         }
 
 
-        public async Task UpdateItemAsync(int id, Item item)
+        public async Task<Item> UpdateItemAsync(int id, Item item)
         {
             var response = await _httpClient.PutAsJsonAsync($"api/Item/{id}", item);
             if (!response.IsSuccessStatusCode)
             {
                 throw new Exception($"Error updating item with ID {id}: {response.ReasonPhrase}");
             }
+
+            return await response.Content.ReadFromJsonAsync<Item>();
         }
 
         public async Task DeleteItemAsync(int id)

@@ -1,10 +1,10 @@
-﻿@page "/itemsNotes"
+﻿@* @page "/itemsNotes"
 @using Ale_Ink.Shared.Models
 @using Ale_Ink.Shared.DTOs
-@inject HttpServices.NoteHttpService NoteService
-@inject HttpServices.ItemHttpService ItemService
-@inject HttpServices.PersonHttpService PersonService
-@inject HttpServices.PlaceHttpService PlaceService
+@inject HttpServices.INoteHttpService NoteService
+@inject HttpServices.IItemHttpService ItemService
+@inject HttpServices.IPersonHttpService PersonService
+@inject HttpServices.IPlaceHttpService PlaceService
 @inherits LayoutComponentBase
 
 
@@ -104,8 +104,8 @@
 @code {
     private List<Note> Notes = new();
     private List<Item> Items = new();
-    private List<Person> People = new();
-    private List<Place> Places = new();
+    // private List<Person> People = new();
+    // private List<Place> Places = new();
     private string NewNoteContent = "";
     private bool Visible = false;
     private Note? NoteToAssign;
@@ -171,6 +171,8 @@
             }
 
             CloseModal();
+
+            Notes = await NoteService.GetAllNotesAsync(); // Refresh notes list
         }
         catch (Exception ex)
         {
@@ -198,4 +200,70 @@
         SelectedItemFilter = "";
     }
 
-}
+} *@
+
+@* @page "/itemsNotes"
+
+@using Ale_Ink.Components
+@using Ale_Ink.HttpServices
+@using Ale_Ink.Shared.Models
+@using Ale_Ink.Shared.DTOs
+@inject HttpServices.INoteHttpService NoteService
+@inject HttpServices.IItemHttpService ItemService
+@inject HttpServices.NoteAssignmentService NoteAssignmentService
+
+<NoteListComponent TEntity="Item"
+                   Title="Item"
+                   Notes="@Notes"
+                   Entities="@Items"
+                   GetEntityName="@(item => item.Name)"
+                   EntityFilter="@(note => note.Items?.Any(i => i.Name == SelectedFilter) == true)"
+                   OnAssignEntity="(type, name, noteId) => SaveAssignment" />
+
+@code {
+    private List<Note> Notes = new();
+    private List<Item> Items = new();
+
+    private string EntityName = "";
+    private string SelectedType = "";
+    private string? ErrorMessage;
+    private Note? NoteToAssign;
+    private string SelectedFilter = "";
+    private bool Visible = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var allNotes = await NoteService.GetAllNotesAsync();
+        Notes = allNotes.Where(n => n.Items != null && n.Items.Any()).ToList(); // Only item-related notes
+        Items = await ItemService.GetAllItemsAsync();
+    }
+
+    // private async Task AssignItemAsync(string name, Note note)
+    // {
+    //     await ItemService.AddItemFromNoteAsync(new ItemFromNoteDTO
+    //     {
+    //         Name = name,
+    //         NoteId = note.NoteId
+    //     });
+
+    //     Notes = await NoteService.GetAllNotesAsync(); // Refresh after assignment
+    // }
+
+     private async Task SaveAssignment(string type, string name, int noteId)
+     {
+         await NoteAssignmentService.AssignEntityToNoteAsync(type, name, noteId);
+
+         await CloseModal();
+
+         Notes = await NoteService.GetAllNotesAsync();
+     }
+
+    private async Task CloseModal()
+    {
+        EntityName = "";
+        SelectedType = "";
+        ErrorMessage = null;
+        Visible = false;
+
+    }
+} *@

@@ -1,10 +1,9 @@
 ﻿using System.Net.Http.Json;
 using Ale_Ink.Shared.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace Ale_Ink.HttpServices
 {
-    public class NoteHttpService
+    public class NoteHttpService : INoteHttpService
     {
         private readonly HttpClient _httpClient;
 

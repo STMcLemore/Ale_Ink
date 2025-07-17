@@ -1,10 +1,12 @@
 ﻿@page "/"
+@using Ale_Ink.Components
 @using Ale_Ink.Shared.Models
 @using Ale_Ink.Shared.DTOs
-@inject HttpServices.NoteHttpService NoteService
-@inject HttpServices.ItemHttpService ItemService
-@inject HttpServices.PersonHttpService PersonService
-@inject HttpServices.PlaceHttpService PlaceService
+@inject HttpServices.INoteHttpService NoteService
+@inject HttpServices.IItemHttpService ItemService
+@inject HttpServices.IPersonHttpService PersonService
+@inject HttpServices.IPlaceHttpService PlaceService
+@inject HttpServices.NoteAssignmentService NoteAssignmentService
 @inherits LayoutComponentBase
 
 
@@ -13,14 +15,19 @@
         <h3>Campaign Notes</h3>
     </div>
 
+    <NoteAssignmentModal @ref="noteAssignmentModalRef"
+    Note="NoteToAssign"
+    OnAssignmentSaved="ReloadNotes"
+    OnClose="CloseModal" />
+
     <div class="notes-list">
         @foreach (var note in Notes)
         {
             <div class="note-box-wrapper">
-                   <button class="note-action-button" @onclick="() => OnNoteAction(note)">+</button>
-                    <div class="note-box">
-                        <div class="note-header">
-                       <div class="note-timestamp">@note.CreatedAt.ToString("g")</div>
+                <button class="note-action-button" @onclick="@(() => OnNoteAction(note))">+</button>
+                <div class="note-box">
+                    <div class="note-header">
+                        <div class="note-timestamp">@note.CreatedAt.ToString("g")</div>
                         <div class="note-category-row">
                             @if (note.Items?.Any() == true)
                             {
@@ -37,7 +44,7 @@
                         </div>
                     </div>
                     <div class="note-content">@note.Content</div>
-                    </div>
+                </div>
             </div>
         }
 
@@ -51,42 +58,6 @@
     </div>
 </div>
 
-@if (Visible)
-{
-    <div class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Assign Note</h5>
-                    <button type="button" class="btn-close" @onclick="Cancel"></button>
-                </div>
-                <div class="modal-body">
-                    <p><strong>Note:</strong> @NoteToAssign?.Content</p>
-
-                    <input class="form-control mb-2" @bind="EntityName" placeholder="Enter name..." />
-
-                    <select class="form-select mb-2" @bind="SelectedType">
-                        <option value="">Select type</option>
-                        <option value="Person">Person</option>
-                        <option value="Item">Item</option>
-                        <option value="Place">Place</option>
-                    </select>
-
-                    @if (ErrorMessage != null)
-                    {
-                        <div class="text-danger">@ErrorMessage</div>
-                    }
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-danger" @onclick="DeleteNote">Delete</button>
-                    <button class="btn btn-secondary" @onclick="Cancel">Cancel</button>
-                    <button class="btn btn-primary" @onclick="SaveAssignment">Assign</button>
-                </div>
-            </div>
-        </div>
-    </div>
-}
-
 
 @code {
     private List<Note> Notes = new();
@@ -98,7 +69,7 @@
     private Note? NoteToAssign;
     private string ModalCssClass => Visible ? "modal fade show d-block" : "modal fade";
 
-
+    private NoteAssignmentModal noteAssignmentModalRef;
     private string EntityName = "";
     private string SelectedType = "";
     private string? ErrorMessage;
@@ -124,81 +95,29 @@
             var newNote = new Note { Content = NewNoteContent, CreatedAt = DateTime.UtcNow };
             await NoteService.AddNoteAsync(newNote);
             NewNoteContent = "";
-            Notes = await NoteService.GetAllNotesAsync(); // Refresh notes list
-        }
-    }
-
-
-    private async Task DeleteNote()
-    {
-        if (NoteToAssign == null)
-        {
-            ErrorMessage = "No note selected for deletion.";
-            return;
-        }
-        try
-        {
-            await NoteService.DeleteNoteAsync(NoteToAssign.NoteId);
-            Notes.Remove(NoteToAssign);
-            CloseModal();
-        }
-        catch (Exception ex)
-        {
-            ErrorMessage = $"Failed to delete note: {ex.Message}";
+            Notes = await NoteService.GetAllNotesAsync();
         }
     }
 
     private void OnNoteAction(Note note)
     {
         NoteToAssign = note;
-        Visible = true;
+        noteAssignmentModalRef.Show();
     }
 
-    private async Task SaveAssignment()
+    private async Task ReloadNotes()
     {
-        if (NoteToAssign == null || string.IsNullOrWhiteSpace(EntityName) || string.IsNullOrWhiteSpace(SelectedType))
-        {
-            ErrorMessage = "All fields are required.";
-            return;
-        }
-
-        ErrorMessage = null;
-
-        try
-        {
-            switch (SelectedType)
-            {
-                case "Person":
-                    await PersonService.AddPersonFromNoteAsync(new PersonFromNoteDTO { Name = EntityName, NoteId = NoteToAssign!.NoteId });
-                    break;
-                case "Item":
-                    await ItemService.AddItemFromNoteAsync(new ItemFromNoteDTO { Name = EntityName, NoteId = NoteToAssign!.NoteId });
-                    break;
-                case "Place":
-                    await PlaceService.AddPlaceFromNoteAsync(new PlaceFromNoteDTO { Name = EntityName, NoteId = NoteToAssign!.NoteId });
-                    break;
-
-                    return;
-            }
-
-            CloseModal();
-
-            Notes = await NoteService.GetAllNotesAsync(); // Refresh notes list
-        }
-        catch (Exception ex)
-        {
-            ErrorMessage = $"Failed to assign: {ex.Message}";
-        }
+        Notes = await NoteService.GetAllNotesAsync();
+        StateHasChanged();
     }
 
-    private void Cancel() => CloseModal();
-
-    private async Task CloseModal()
+    private void CloseModal()
     {
         EntityName = "";
         SelectedType = "";
         ErrorMessage = null;
         Visible = false;
+        noteAssignmentModalRef?.Hide();
 
     }
 
