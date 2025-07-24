@@ -13,6 +13,11 @@
         <h3>@Title Notes</h3>
     </div>
 
+    <NoteAssignmentModal @ref="noteAssignmentModalRef"
+                         Note="NoteToAssign"
+                         OnAssignmentSaved="ReloadNotes"
+                         OnClose="CloseModal" />
+
     <div class="main-content">
         <div class="notes-section">
             <div class="notes-list">
@@ -45,50 +50,25 @@
             </div>
         </div>
 
-        <div class="item-sidebar">
-            <h5>@Title List</h5>
-            <ul class="list-unstyled">
-                @foreach (var entity in Entities)
-                {
-                    <li>
-                        <button class="btn btn-link text-start w-100" @onclick="() => FilterByEntity(entity)">
-                            @GetEntityName(entity)
-                        </button>
-                    </li>
-                }
-            </ul>
-            <button class="btn btn-sm btn-secondary mt-2" @onclick="ClearFilter">Clear Filter</button>
-        </div>
-    </div>
-
-    @if (Visible)
-    {
-        <div class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Assign Note</h5>
-                        <button type="button" class="btn-close" @onclick="Cancel"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p><strong>Note:</strong> @NoteToAssign?.Content</p>
-
-                        <input class="form-control mb-2" @bind="EntityName" placeholder="Enter name..." />
-
-                        @if (ErrorMessage != null)
-                        {
-                            <div class="text-danger">@ErrorMessage</div>
-                        }
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-secondary" @onclick="Cancel">Cancel</button>
-                        <button class="btn btn-primary" @onclick="SaveAssignment">Assign</button>
-                    </div>
-                </div>
+        @if (ShowSidebar)
+        {
+            <div class="item-sidebar">
+                <h5>@Title List</h5>
+                <ul class="list-unstyled">
+                    @foreach (var entity in Entities)
+                    {
+                        <li>
+                            <button class="btn btn-link text-start w-100" @onclick="() => FilterByEntity(entity)">
+                                @GetEntityName(entity)
+                            </button>
+                        </li>
+                    }
+                </ul>
+                <button class="btn btn-sm btn-secondary mt-2" @onclick="ClearFilter">Clear Filter</button>
             </div>
-        </div>
-    }
-</div>
+         }
+    </div>
+</div> 
 
 @code {
     [Parameter] public string Title { get; set; } = "Notes";
@@ -97,13 +77,17 @@
     [Parameter] public Func<TEntity, string> GetEntityName { get; set; } = default!;
     [Parameter] public Func<Note, bool> EntityFilter { get; set; } = default!;
     [Parameter] public Func<string, string, int, Task> OnAssignEntity { get; set; } = default!;
+    [Parameter] public string? SelectedFilter { get; set; }
+    [Parameter] public EventCallback<string?> SelectedFilterChanged { get; set; }
+    [Parameter] public bool ShowSidebar { get; set; } = true;
 
-    private Note? NoteToAssign;
-    private string? SelectedFilter = null;
+
     private string EntityName = "";
     private string SelectedType = "";
     private bool Visible = false;
     private string? ErrorMessage;
+    private NoteAssignmentModal noteAssignmentModalRef;
+    private Note? NoteToAssign;
 
     private List<Note> FilteredNotes =>
         string.IsNullOrEmpty(SelectedFilter)
@@ -113,71 +97,43 @@
     private void OnNoteAction(Note note)
     {
         NoteToAssign = note;
-        Visible = true;
+        noteAssignmentModalRef.Show();
     }
-
-    // private async Task AssignNote()
-    // {
-    //     if (NoteToAssign == null || string.IsNullOrWhiteSpace(EntityName))
-    //     {
-    //         ErrorMessage = "All fields required.";
-    //         return;
-    //     }
-
-    //     ErrorMessage = null;
-
-    //     await OnAssignEntity.Invoke(EntityName, NoteToAssign);
-    //     CloseModal();
-    // }
 
     // private async Task SaveAssignment()
     // {
-    //     if (NoteToAssign == null || string.IsNullOrWhiteSpace(EntityName) || string.IsNullOrWhiteSpace(SelectedType))
-    //     {
-    //         ErrorMessage = "All fields are required.";
-    //         return;
-    //     }
+    //     await NoteAssignmentService.AssignEntityToNoteAsync(SelectedType, EntityName, NoteToAssign.NoteId);
 
-    //     ErrorMessage = null;
+    //     CloseModal();
 
-    //     try
-    //     {
-    //         await NoteAssignmentService.AssignEntityToNoteAsync(SelectedType, EntityName, NoteToAssign.NoteId);
-    //         Notes = (await NoteService.GetAllNotesAsync())
-    //                     .Where(n => n.Items != null && n.Items.Any())
-    //                     .ToList();
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         ErrorMessage = $"Failed to assign: {ex.Message}";
-    //     }
+    //     Notes = await NoteService.GetAllNotesAsync();
     // }
-
-    private async Task SaveAssignment()
-    {
-        await NoteAssignmentService.AssignEntityToNoteAsync(SelectedType, EntityName, NoteToAssign.NoteId);
-
-        CloseModal();
-
-        Notes = await NoteService.GetAllNotesAsync();
-    }
 
     private void CloseModal()
     {
         EntityName = "";
+        SelectedType = "";
+        ErrorMessage = null;
         Visible = false;
-        NoteToAssign = null;
+        noteAssignmentModalRef?.Hide();
     }
 
-    private void Cancel() => CloseModal();
+    // private void Cancel() => CloseModal();
 
-    private void FilterByEntity(TEntity entity)
+    private async void FilterByEntity(TEntity entity)
     {
-        SelectedFilter = GetEntityName(entity);
+        await SelectedFilterChanged.InvokeAsync(GetEntityName(entity));
     }
 
-    private void ClearFilter()
+
+    private async void ClearFilter()
     {
-        SelectedFilter = null;
+        await SelectedFilterChanged.InvokeAsync(null);
+    }
+
+    private async Task ReloadNotes()
+    {
+        Notes = await NoteService.GetAllNotesAsync();
+        StateHasChanged();
     }
 }

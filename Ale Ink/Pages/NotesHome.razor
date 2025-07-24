@@ -1,5 +1,7 @@
 ﻿@page "/"
+
 @using Ale_Ink.Components
+@using Ale_Ink.HttpServices
 @using Ale_Ink.Shared.Models
 @using Ale_Ink.Shared.DTOs
 @inject HttpServices.INoteHttpService NoteService
@@ -7,73 +9,36 @@
 @inject HttpServices.IPersonHttpService PersonService
 @inject HttpServices.IPlaceHttpService PlaceService
 @inject HttpServices.NoteAssignmentService NoteAssignmentService
-@inherits LayoutComponentBase
 
 
-<div class="page-container">
-    <div class="header">
-        <h3>Campaign Notes</h3>
-    </div>
+<NoteListComponent TEntity="Note"
+                   Title="All"
+                   Notes="@Notes"
+                   Entities="@Notes"
+                   GetEntityName="@(note => note.Content)"
+                   OnAssignEntity="(type, name, noteId) => SaveAssignment(type, name, noteId)"
+                   SelectedFilter="@SelectedFilter"
+                   SelectedFilterChanged="@(value => SelectedFilter = value)" 
+                   ShowSidebar="false" />
 
-    <NoteAssignmentModal @ref="noteAssignmentModalRef"
-    Note="NoteToAssign"
-    OnAssignmentSaved="ReloadNotes"
-    OnClose="CloseModal" />
-
-    <div class="notes-list">
-        @foreach (var note in Notes)
-        {
-            <div class="note-box-wrapper">
-                <button class="note-action-button" @onclick="@(() => OnNoteAction(note))">+</button>
-                <div class="note-box">
-                    <div class="note-header">
-                        <div class="note-timestamp">@note.CreatedAt.ToString("g")</div>
-                        <div class="note-category-row">
-                            @if (note.Items?.Any() == true)
-                            {
-                                <span class="note-category item">Item</span>
-                            }
-                            @if (note.People?.Any() == true)
-                            {
-                                <span class="note-category person">Person</span>
-                            }
-                            @if (note.Places?.Any() == true)
-                            {
-                                <span class="note-category place">Place</span>
-                            }
-                        </div>
-                    </div>
-                    <div class="note-content">@note.Content</div>
-                </div>
-            </div>
-        }
-
-
-    </div>
-
-    <div class="note-input">
-        <textarea @bind="NewNoteContent" rows="3" placeholder="Enter your note here..."></textarea>
-        <br />
-        <button class="btn btn-primary mt-2" @onclick="SubmitNote">Add Note</button>
-    </div>
+<div class="note-input">
+    <textarea @bind="NewNoteContent" rows="3" placeholder="Enter your note here..."></textarea>
+    <br />
+    <button class="btn btn-primary mt-2" @onclick="SubmitNote">Add Note</button>
 </div>
 
 
 @code {
     private List<Note> Notes = new();
     private List<Item> Items = new();
-    private List<Person> People = new();
-    private List<Place> Places = new();
-    private string NewNoteContent = "";
-    private bool Visible = false;
-    private Note? NoteToAssign;
-    private string ModalCssClass => Visible ? "modal fade show d-block" : "modal fade";
 
-    private NoteAssignmentModal noteAssignmentModalRef;
     private string EntityName = "";
     private string SelectedType = "";
     private string? ErrorMessage;
-
+    private Note? NoteToAssign;
+    private string SelectedFilter = "";
+    private bool Visible = false;
+    private string NewNoteContent = "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -88,6 +53,24 @@
     }
 
 
+    private async Task SaveAssignment(string type, string name, int noteId)
+    {
+        await NoteAssignmentService.AssignEntityToNoteAsync(type, name, noteId);
+
+        await CloseModal();
+
+        Notes = await NoteService.GetAllNotesAsync();
+    }
+
+    private async Task CloseModal()
+    {
+        EntityName = "";
+        SelectedType = "";
+        ErrorMessage = null;
+        Visible = false;
+
+    }
+
     private async Task SubmitNote()
     {
         if (!string.IsNullOrWhiteSpace(NewNoteContent))
@@ -98,28 +81,5 @@
             Notes = await NoteService.GetAllNotesAsync();
         }
     }
-
-    private void OnNoteAction(Note note)
-    {
-        NoteToAssign = note;
-        noteAssignmentModalRef.Show();
-    }
-
-    private async Task ReloadNotes()
-    {
-        Notes = await NoteService.GetAllNotesAsync();
-        StateHasChanged();
-    }
-
-    private void CloseModal()
-    {
-        EntityName = "";
-        SelectedType = "";
-        ErrorMessage = null;
-        Visible = false;
-        noteAssignmentModalRef?.Hide();
-
-    }
-
 }
 

@@ -1,208 +1,4 @@
-﻿@* @page "/itemsNotes"
-@using Ale_Ink.Shared.Models
-@using Ale_Ink.Shared.DTOs
-@inject HttpServices.INoteHttpService NoteService
-@inject HttpServices.IItemHttpService ItemService
-@inject HttpServices.IPersonHttpService PersonService
-@inject HttpServices.IPlaceHttpService PlaceService
-@inherits LayoutComponentBase
-
-
-
-<div class="page-wrapper">
-    <div class="header">
-        <h3>Item Notes</h3>
-    </div>
-
-    <div class="main-content">
-        <div class="notes-section">
-            <div class="notes-list">
-                @foreach (var note in FilteredNotes)
-                {
-                    <div class="note-box-wrapper">
-                        <button class="note-action-button" @onclick="() => OnNoteAction(note)">+</button>
-                        <div class="note-box">
-                            <div class="note-header">
-                                <div class="note-timestamp">@note.CreatedAt.ToString("g")</div>
-                                <div class="note-category-row">
-                                    @if (note.Items?.Any() == true)
-                                    {
-                                        <span class="note-category item">Item</span>
-                                    }
-                                    @if (note.People?.Any() == true)
-                                    {
-                                        <span class="note-category person">Person</span>
-                                    }
-                                    @if (note.Places?.Any() == true)
-                                    {
-                                        <span class="note-category place">Place</span>
-                                    }
-                                </div>
-                            </div>
-                            <div class="note-content">@note.Content</div>
-                        </div>
-                    </div>
-                }
-            </div>
-        </div>
-
-        <div class="item-sidebar">
-            <h5>Items</h5>
-            <ul class="list-unstyled">
-                @foreach (var item in Items)
-                {
-                    <li>
-                        <button class="btn btn-link text-start w-100" @onclick="() => FilterByItem(item)">
-                            @item.Name
-                        </button>
-                    </li>
-                }
-            </ul>
-            <button class="btn btn-sm btn-secondary mt-2" @onclick="ClearItemFilter">Clear Filter</button>
-        </div>
-    </div>
-</div>
-
-
-
-
-@if (Visible)
-{
-    <div class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Assign Note</h5>
-                    <button type="button" class="btn-close" @onclick="Cancel"></button>
-                </div>
-                <div class="modal-body">
-                    <p><strong>Note:</strong> @NoteToAssign?.Content</p>
-
-                    <input class="form-control mb-2" @bind="EntityName" placeholder="Enter name..." />
-
-                    <select class="form-select mb-2" @bind="SelectedType">
-                        <option value="">Select type</option>
-                        <option value="Person">Person</option>
-                        <option value="Item">Item</option>
-                        <option value="Place">Place</option>
-                    </select>
-
-                    @if (ErrorMessage != null)
-                    {
-                        <div class="text-danger">@ErrorMessage</div>
-                    }
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-secondary" @onclick="Cancel">Cancel</button>
-                    <button class="btn btn-primary" @onclick="SaveAssignment">Assign</button>
-                </div>
-            </div>
-        </div>
-    </div>
-}
-
-@code {
-    private List<Note> Notes = new();
-    private List<Item> Items = new();
-    // private List<Person> People = new();
-    // private List<Place> Places = new();
-    private string NewNoteContent = "";
-    private bool Visible = false;
-    private Note? NoteToAssign;
-    private List<Note> FilteredNotes => string.IsNullOrEmpty(SelectedItemFilter)
-        ? Notes
-        : Notes.Where(n => n.Items?.Any(i => i.Name == SelectedItemFilter) == true).ToList();
-
-    private string SelectedItemFilter = "";
-
-
-    private string EntityName = "";
-    private string SelectedType = "";
-    private string? ErrorMessage;
-
-
-    protected override async Task OnInitializedAsync()
-    {
-        try
-        {
-            var allNotes = await NoteService.GetAllNotesAsync();
-            Notes = allNotes.Where(n => n.Items != null && n.Items.Any()).ToList();
-            Items = await ItemService.GetAllItemsAsync();
-
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error fetching item notes: {ex.Message}");
-        }
-    }
-
-
-    private void OnNoteAction(Note note)
-    {
-        NoteToAssign = note;
-        Visible = true;
-    }
-
-    private async Task SaveAssignment()
-    {
-        if (NoteToAssign == null || string.IsNullOrWhiteSpace(EntityName) || string.IsNullOrWhiteSpace(SelectedType))
-        {
-            ErrorMessage = "All fields are required.";
-            return;
-        }
-
-        ErrorMessage = null;
-
-        try
-        {
-            switch (SelectedType)
-            {
-                case "Person":
-                    await PersonService.AddPersonFromNoteAsync(new PersonFromNoteDTO { Name = EntityName, NoteId = NoteToAssign!.NoteId });
-                    break;
-                case "Item":
-                    await ItemService.AddItemFromNoteAsync(new ItemFromNoteDTO { Name = EntityName, NoteId = NoteToAssign!.NoteId });
-                    break;
-                case "Place":
-                    await PlaceService.AddPlaceFromNoteAsync(new PlaceFromNoteDTO { Name = EntityName, NoteId = NoteToAssign!.NoteId });
-                    break;
-
-                    return;
-            }
-
-            CloseModal();
-
-            Notes = await NoteService.GetAllNotesAsync(); // Refresh notes list
-        }
-        catch (Exception ex)
-        {
-            ErrorMessage = $"Failed to assign: {ex.Message}";
-        }
-    }
-
-    private void Cancel() => CloseModal();
-
-    private void CloseModal()
-    {
-        EntityName = "";
-        SelectedType = "";
-        ErrorMessage = null;
-        Visible = false;
-    }
-
-    private void FilterByItem(Item item)
-    {
-        SelectedItemFilter = item.Name;
-    }
-
-    private void ClearItemFilter()
-    {
-        SelectedItemFilter = "";
-    }
-
-} *@
-
-@* @page "/itemsNotes"
+﻿@page "/itemsNotes"
 
 @using Ale_Ink.Components
 @using Ale_Ink.HttpServices
@@ -218,7 +14,9 @@
                    Entities="@Items"
                    GetEntityName="@(item => item.Name)"
                    EntityFilter="@(note => note.Items?.Any(i => i.Name == SelectedFilter) == true)"
-                   OnAssignEntity="(type, name, noteId) => SaveAssignment" />
+                   OnAssignEntity="(type, name, noteId) => SaveAssignment(type, name, noteId)"
+                   SelectedFilter="@SelectedFilter"
+                   SelectedFilterChanged="@(value => SelectedFilter = value)" />
 
 @code {
     private List<Note> Notes = new();
@@ -238,16 +36,6 @@
         Items = await ItemService.GetAllItemsAsync();
     }
 
-    // private async Task AssignItemAsync(string name, Note note)
-    // {
-    //     await ItemService.AddItemFromNoteAsync(new ItemFromNoteDTO
-    //     {
-    //         Name = name,
-    //         NoteId = note.NoteId
-    //     });
-
-    //     Notes = await NoteService.GetAllNotesAsync(); // Refresh after assignment
-    // }
 
      private async Task SaveAssignment(string type, string name, int noteId)
      {
@@ -266,4 +54,4 @@
         Visible = false;
 
     }
-} *@
+} 
