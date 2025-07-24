@@ -1,0 +1,58 @@
+﻿@page "/placeNotes"
+
+@using Ale_Ink.Components
+@using Ale_Ink.HttpServices
+@using Ale_Ink.Shared.Models
+@using Ale_Ink.Shared.DTOs
+@inject HttpServices.INoteHttpService NoteService
+@inject HttpServices.IPlaceHttpService PlaceService
+@inject HttpServices.NoteAssignmentService NoteAssignmentService
+
+<NoteListComponent TEntity="Place"
+                   Title="Place"
+                   Notes="@Notes"
+                   Entities="@Places"
+                   GetEntityName="@(place => place.Name)"
+                   EntityFilter="@(note => note.Places?.Any(i => i.Name == SelectedFilter) == true)"
+                   OnAssignEntity="(type, name, noteId) => SaveAssignment(type, name, noteId)"
+                   SelectedFilter="@SelectedFilter"
+                   SelectedFilterChanged="@(value => SelectedFilter = value)" />
+
+@code {
+    private List<Note> Notes = new();
+    private List<Place> Places = new();
+
+    private string EntityName = "";
+    private string SelectedType = "";
+    private string? ErrorMessage;
+    private Note? NoteToAssign;
+    private string SelectedFilter = "";
+    private bool Visible = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var allNotes = await NoteService.GetAllNotesAsync();
+        Notes = allNotes.Where(n => n.Places != null && n.Places.Any()).ToList(); // Only place-related notes
+        Places = await PlaceService.GetAllPlacesAsync();
+    }
+
+
+    private async Task SaveAssignment(string type, string name, int noteId)
+    {
+        await NoteAssignmentService.AssignEntityToNoteAsync(type, name, noteId);
+
+        await CloseModal();
+
+        Notes = await NoteService.GetAllNotesAsync();
+    }
+
+    private async Task CloseModal()
+    {
+        EntityName = "";
+        SelectedType = "";
+        ErrorMessage = null;
+        Visible = false;
+
+    }
+}
+

@@ -100,15 +100,6 @@
         noteAssignmentModalRef.Show();
     }
 
-    // private async Task SaveAssignment()
-    // {
-    //     await NoteAssignmentService.AssignEntityToNoteAsync(SelectedType, EntityName, NoteToAssign.NoteId);
-
-    //     CloseModal();
-
-    //     Notes = await NoteService.GetAllNotesAsync();
-    // }
-
     private void CloseModal()
     {
         EntityName = "";
@@ -117,8 +108,6 @@
         Visible = false;
         noteAssignmentModalRef?.Hide();
     }
-
-    // private void Cancel() => CloseModal();
 
     private async void FilterByEntity(TEntity entity)
     {
