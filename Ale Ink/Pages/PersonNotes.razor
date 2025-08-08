@@ -16,7 +16,9 @@
                    EntityFilter="@(note => note.People?.Any(i => i.Name == SelectedFilter) == true)"
                    OnAssignEntity="(type, name, noteId) => SaveAssignment(type, name, noteId)"
                    SelectedFilter="@SelectedFilter"
-                   SelectedFilterChanged="@(value => SelectedFilter = value)" />
+                   SelectedFilterChanged="@(value => SelectedFilter = value)" 
+                   OnAssignmentSaved="ReloadNotesFromGrandparent"
+                   OnEntitiesRefreshed="ReloadAllEntities" />
 
 @code {
     private List<Note> Notes = new();
@@ -44,6 +46,19 @@
         await CloseModal();
 
         Notes = await NoteService.GetAllNotesAsync();
+    }
+
+    private async Task ReloadNotesFromGrandparent()
+    {
+        Notes = await NoteService.GetAllNotesAsync();
+        StateHasChanged();
+    }
+
+    private async Task ReloadAllEntities()
+    {
+        People = await PersonService.GetAllPersonsAsync();
+
+        StateHasChanged();
     }
 
     private async Task CloseModal()

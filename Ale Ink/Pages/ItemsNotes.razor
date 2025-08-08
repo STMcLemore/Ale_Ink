@@ -9,14 +9,17 @@
 @inject HttpServices.NoteAssignmentService NoteAssignmentService
 
 <NoteListComponent TEntity="Item"
-                   Title="Item"
-                   Notes="@Notes"
-                   Entities="@Items"
-                   GetEntityName="@(item => item.Name)"
-                   EntityFilter="@(note => note.Items?.Any(i => i.Name == SelectedFilter) == true)"
-                   OnAssignEntity="(type, name, noteId) => SaveAssignment(type, name, noteId)"
-                   SelectedFilter="@SelectedFilter"
-                   SelectedFilterChanged="@(value => SelectedFilter = value)" />
+Title="Item"
+Notes="@Notes"
+Entities="@Items"
+GetEntityName="@(item => item.Name)"
+EntityFilter="@(note => note.Items?.Any(i => i.Name == SelectedFilter) == true)"
+OnAssignEntity="(type, name, noteId) => SaveAssignment(type, name, noteId)"
+SelectedFilter="@SelectedFilter"
+SelectedFilterChanged="@(value => SelectedFilter = value)"
+OnAssignmentSaved="ReloadNotesFromGrandparent"
+OnEntitiesRefreshed="ReloadAllEntities" />  
+
 
 @code {
     private List<Note> Notes = new();
@@ -37,14 +40,27 @@
     }
 
 
-     private async Task SaveAssignment(string type, string name, int noteId)
-     {
-         await NoteAssignmentService.AssignEntityToNoteAsync(type, name, noteId);
+    private async Task SaveAssignment(string type, string name, int noteId)
+    {
+        await NoteAssignmentService.AssignEntityToNoteAsync(type, name, noteId);
 
-         await CloseModal();
+        await CloseModal();
 
-         Notes = await NoteService.GetAllNotesAsync();
-     }
+        Notes = await NoteService.GetAllNotesAsync();
+    }
+
+      private async Task ReloadNotesFromGrandparent()
+      {
+          Notes = await NoteService.GetAllNotesAsync();
+          StateHasChanged();
+      }  
+
+      private async Task ReloadAllEntities()
+      {
+          Items = await ItemService.GetAllItemsAsync();
+
+          StateHasChanged();
+      }
 
     private async Task CloseModal()
     {

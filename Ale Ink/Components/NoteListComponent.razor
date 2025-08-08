@@ -80,6 +80,8 @@
     [Parameter] public string? SelectedFilter { get; set; }
     [Parameter] public EventCallback<string?> SelectedFilterChanged { get; set; }
     [Parameter] public bool ShowSidebar { get; set; } = true;
+    [Parameter] public EventCallback OnEntitiesRefreshed { get; set; }
+    [Parameter] public EventCallback OnAssignmentSaved { get; set; }
 
 
     private string EntityName = "";
@@ -122,13 +124,10 @@
 
     private async Task ReloadNotes()
     {
-        Notes = await NoteService.GetAllNotesAsync();
+        await OnAssignmentSaved.InvokeAsync();
 
-        // refresh the filtered notes
-        if (!string.IsNullOrEmpty(SelectedFilter))
-        {
-            Notes = Notes.Where(EntityFilter).ToList();
-        }
+        await OnEntitiesRefreshed.InvokeAsync();
+
         StateHasChanged();
     }
 }
