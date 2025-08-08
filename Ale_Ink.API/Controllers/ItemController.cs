@@ -99,12 +99,6 @@ namespace Ale_Ink.API.Controllers
         {
             try
             {
-                //var note = await _itemService.GetItemByIdAsync(id);
-                //if (note == null)
-                //{
-                //    return NotFound();
-                //}
-
                 await _itemService.DeleteItemAsync(id);
                 return Ok();
             }

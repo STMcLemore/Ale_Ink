@@ -2,6 +2,7 @@
 using Ale_Ink.Shared.DTOs;
 using Ale_Ink.API.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace Ale_Ink.API.Services
 {
@@ -38,31 +39,58 @@ namespace Ale_Ink.API.Services
             return item;
         }
 
-        public async Task UpdateItemAsync(int id, Item item)
+        public async Task UpdateItemAsync(int id, Item updatedItem)
         {
-            if (_context.Items.Any(x => x.ItemId == id))
+            //if (_context.Items.Any(x => x.ItemId == id))
+            //{
+            //    _context.Items.Update(item);
+            //    await _context.SaveChangesAsync();
+            //}
+            //else
+            //{
+            //    throw new InvalidOperationException($"Unable to process the operation.");
+            //}
+
+            var existingItem = await _context.Items
+                .Include(i => i.Notes)
+                .FirstOrDefaultAsync(i => i.ItemId == id);
+
+            if (existingItem == null)
+                throw new InvalidOperationException("Item not found.");
+
+            // Clear and re-add notes (ensures EF Core tracks changes in the join table)
+            existingItem.Notes.Clear();
+            foreach (var note in updatedItem.Notes)
             {
-                _context.Items.Update(item);
-                await _context.SaveChangesAsync();
+                existingItem.Notes.Add(note);
             }
-            else
-            {
-                throw new InvalidOperationException($"Unable to process the operation.");
-            }
+
+            await _context.SaveChangesAsync();
         }
 
         public async Task DeleteItemAsync(int id)
         {
-            var item = _context.Items.Single(x => x.ItemId == id);
+            var item = _context.Items
+                .Include(i => i.Notes)
+                .SingleOrDefault(x => x.ItemId == id);
+
             if (item != null)
             {
+                foreach (var note in item.Notes)
+                {
+                    note.Items.Remove(item);
+                }
+                await _context.SaveChangesAsync();
+
                 _context.Items.Remove(item);
                 await _context.SaveChangesAsync();
             }
+
             else
             {
-                throw new InvalidOperationException($"Unable to process the operation.");
+                throw new InvalidOperationException($"Unable to process the operation. Item with ID {id} not found.");
             }
+
         }
     }
 }

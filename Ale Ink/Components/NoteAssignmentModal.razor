@@ -1,8 +1,11 @@
 ﻿@using Ale_Ink.HttpServices
 @using Ale_Ink.Shared.Models
 @using Ale_Ink.Shared.DTOs
+@using Microsoft.EntityFrameworkCore
 @inject INoteHttpService NoteService
+@inject IItemHttpService ItemService
 @inject NoteAssignmentService NoteAssignmentService
+@inject HttpClient Http
 
 
 @if (IsVisible)
@@ -32,7 +35,7 @@
                     }
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-danger" @onclick="DeleteNote">Delete Note</button>
+                    <button class="btn btn-danger" @onclick="() =>DeleteNote(Note.NoteId)">Delete Note</button>
                     <button class="btn btn-secondary" @onclick="Hide">Cancel</button>
                     <button class="btn btn-primary" @onclick="SaveAssignment">Assign</button>
                 </div>
@@ -53,8 +56,11 @@
     private string SelectedType = "";
     private string? ErrorMessage;
     private List<Note> Notes = new();
+    private List<Item> Items = new();
+    private List<Person> People = new();
+    private List<Place> Places = new();
 
-    
+
 
     private async Task SaveAssignment()
     {
@@ -71,18 +77,15 @@
         Hide();
     }
 
-    private async Task DeleteNote()
+    private async Task DeleteNote(int noteId) 
     {
         if (Note == null)
         {
             ErrorMessage = "No note selected.";
             return;
         }
-        await NoteService.DeleteNoteAsync(Note.NoteId);
 
-        Notes.Remove(Note);
-
-        Note = null;
+        await NoteService.DeleteNoteAsync(noteId);
 
         await OnAssignmentSaved.InvokeAsync();
 

@@ -71,6 +71,7 @@ namespace Ale_Ink.HttpServices
             var response = await _httpClient.PutAsJsonAsync($"api/Item/{id}", item);
             if (!response.IsSuccessStatusCode)
             {
+                var content = await response.Content.ReadAsStringAsync();
                 throw new Exception($"Error updating item with ID {id}: {response.ReasonPhrase}");
             }
 

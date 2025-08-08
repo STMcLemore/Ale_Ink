@@ -123,6 +123,12 @@
     private async Task ReloadNotes()
     {
         Notes = await NoteService.GetAllNotesAsync();
+
+        // refresh the filtered notes
+        if (!string.IsNullOrEmpty(SelectedFilter))
+        {
+            Notes = Notes.Where(EntityFilter).ToList();
+        }
         StateHasChanged();
     }
 }

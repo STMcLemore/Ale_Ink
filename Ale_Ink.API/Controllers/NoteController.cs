@@ -108,6 +108,8 @@ namespace Ale_Ink.API.Controllers
             {
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
+
+
         }
 
         [HttpGet("search/{keyword}")]
