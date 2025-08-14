@@ -12,14 +12,14 @@
 
 
 <NoteListComponent TEntity="Note"
-                   Title="All"
-                   Notes="@Notes"
-                   Entities="@Notes"
-                   GetEntityName="@(note => note.Content)"
-                   OnAssignEntity="(type, name, noteId) => SaveAssignment(type, name, noteId)"
-                   SelectedFilter="@SelectedFilter"
-                   SelectedFilterChanged="@(value => SelectedFilter = value)" 
-                   ShowSidebar="false" />
+Title="All"
+Notes="@Notes"
+Entities="@Notes"
+GetEntityName="@(note => note.Content)"
+OnAssignEntity="(type, name, noteId) => SaveAssignment(type, name, noteId)"
+SelectedFilter="@SelectedFilter"
+SelectedFilterChanged="@(value => SelectedFilter = value)" 
+ShowSidebar="false" />
 
 <div class="note-input">
     <textarea @bind="NewNoteContent" rows="3" placeholder="Enter your note here..."></textarea>

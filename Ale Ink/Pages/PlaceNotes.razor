@@ -50,7 +50,10 @@
 
     private async Task ReloadNotesFromGrandparent()
     {
-        Notes = await NoteService.GetAllNotesAsync();
+        var allNotes = await NoteService.GetAllNotesAsync();
+
+        Notes = allNotes.Where(n => n.Places != null && n.Places.Any()).ToList(); // Refresh only place-related notes
+
         StateHasChanged();
     }
 

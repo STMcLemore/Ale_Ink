@@ -18,7 +18,7 @@
                    SelectedFilter="@SelectedFilter"
                    SelectedFilterChanged="@(value => SelectedFilter = value)" 
                    OnAssignmentSaved="ReloadNotesFromGrandparent"
-                   OnEntitiesRefreshed="ReloadAllEntities" />
+                   OnEntitiesRefreshed="ReloadAllEntities" /> 
 
 @code {
     private List<Note> Notes = new();
@@ -50,7 +50,10 @@
 
     private async Task ReloadNotesFromGrandparent()
     {
-        Notes = await NoteService.GetAllNotesAsync();
+        var allNotes = await NoteService.GetAllNotesAsync();
+
+        Notes = allNotes.Where(n => n.People != null && n.People.Any()).ToList(); // Refresh people-related notes
+
         StateHasChanged();
     }
 

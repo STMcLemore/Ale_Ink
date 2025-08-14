@@ -9,16 +9,17 @@
 @inject HttpServices.NoteAssignmentService NoteAssignmentService
 
 <NoteListComponent TEntity="Item"
-Title="Item"
-Notes="@Notes"
-Entities="@Items"
-GetEntityName="@(item => item.Name)"
-EntityFilter="@(note => note.Items?.Any(i => i.Name == SelectedFilter) == true)"
-OnAssignEntity="(type, name, noteId) => SaveAssignment(type, name, noteId)"
-SelectedFilter="@SelectedFilter"
-SelectedFilterChanged="@(value => SelectedFilter = value)"
-OnAssignmentSaved="ReloadNotesFromGrandparent"
-OnEntitiesRefreshed="ReloadAllEntities" />  
+                   Title="Item"
+                   Notes="@Notes"
+                   Entities="@Items"
+                   GetEntityName="@(item => item.Name)"
+                   EntityFilter="@(note => note.Items?.Any(i => i.Name == SelectedFilter) == true)"
+                   OnAssignEntity="(type, name, noteId) => SaveAssignment(type, name, noteId)"
+                   SelectedFilter="@SelectedFilter"
+                   SelectedFilterChanged="@(value => SelectedFilter = value)"
+                   OnAssignmentSaved="ReloadNotesFromGrandparent"
+                   OnEntitiesRefreshed="ReloadAllEntities" />
+                   
 
 
 @code {
@@ -51,7 +52,10 @@ OnEntitiesRefreshed="ReloadAllEntities" />
 
       private async Task ReloadNotesFromGrandparent()
       {
-          Notes = await NoteService.GetAllNotesAsync();
+          var allNotes = await NoteService.GetAllNotesAsync();
+
+          Notes = allNotes.Where(n => n.Items != null && n.Items.Any()).ToList(); // Refresh only item-related notes
+
           StateHasChanged();
       }  
 
