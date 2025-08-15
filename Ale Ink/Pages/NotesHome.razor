@@ -17,6 +17,7 @@ Notes="@Notes"
 Entities="@Notes"
 GetEntityName="@(note => note.Content)"
 OnAssignEntity="(type, name, noteId) => SaveAssignment(type, name, noteId)"
+                   OnAssignmentSaved="ReloadNotesFromGrandparent"
 SelectedFilter="@SelectedFilter"
 SelectedFilterChanged="@(value => SelectedFilter = value)" 
 ShowSidebar="false" />
@@ -62,6 +63,13 @@ ShowSidebar="false" />
         Notes = await NoteService.GetAllNotesAsync();
     }
 
+    private async Task ReloadNotesFromGrandparent()
+    {
+        Notes = await NoteService.GetAllNotesAsync();
+
+        StateHasChanged();
+    }
+
     private async Task CloseModal()
     {
         EntityName = "";
@@ -76,8 +84,11 @@ ShowSidebar="false" />
         if (!string.IsNullOrWhiteSpace(NewNoteContent))
         {
             var newNote = new Note { Content = NewNoteContent, CreatedAt = DateTime.UtcNow };
+
             await NoteService.AddNoteAsync(newNote);
+
             NewNoteContent = "";
+
             Notes = await NoteService.GetAllNotesAsync();
         }
     }

@@ -23,9 +23,9 @@ namespace Ale_Ink.HttpServices
 
         public async Task AssignEntityToNoteAsync(string type, string name, int noteId)
         {
-            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(type) || noteId <= 0)
+            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(type))
             {
-                ErrorMessage = "Name and Note ID must be provided.";
+                ErrorMessage = "Name and Note type must be provided.";
                 return;
             }
 
