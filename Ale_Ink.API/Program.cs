@@ -26,6 +26,7 @@ builder.Services.AddScoped<INoteService, NoteService>();
 builder.Services.AddScoped<IItemService, ItemService>();
 builder.Services.AddScoped<IPersonService, PersonService>();
 builder.Services.AddScoped<IPlaceService, PlaceService>();
+builder.Services.AddScoped<INoteAssignmentService, NoteAssignmentService>();
 
 
 builder.Services.AddCors(options =>

@@ -4,9 +4,8 @@
 @using Ale_Ink.HttpServices
 @using Ale_Ink.Shared.Models
 @using Ale_Ink.Shared.DTOs
-@inject HttpServices.INoteHttpService NoteService
+@inject HttpServices.INoteHttpService NoteHttpService
 @inject HttpServices.IPlaceHttpService PlaceService
-@inject HttpServices.NoteAssignmentService NoteAssignmentService
 
 <NoteListComponent TEntity="Place"
                    Title="Place"
@@ -33,7 +32,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var allNotes = await NoteService.GetAllNotesAsync();
+        var allNotes = await NoteHttpService.GetAllNotesAsync();
         Notes = allNotes.Where(n => n.Places != null && n.Places.Any()).ToList(); // Only place-related notes
         Places = await PlaceService.GetAllPlacesAsync();
     }
@@ -41,16 +40,16 @@
 
     private async Task SaveAssignment(string type, string name, int noteId)
     {
-        await NoteAssignmentService.AssignEntityToNoteAsync(type, name, noteId);
+        await NoteHttpService.AssignNoteToEntityAsync(noteId, type, name);
 
         await CloseModal();
 
-        Notes = await NoteService.GetAllNotesAsync();
+        Notes = await NoteHttpService.GetAllNotesAsync();
     }
 
     private async Task ReloadNotesFromGrandparent()
     {
-        var allNotes = await NoteService.GetAllNotesAsync();
+        var allNotes = await NoteHttpService.GetAllNotesAsync();
 
         Notes = allNotes.Where(n => n.Places != null && n.Places.Any()).ToList(); // Refresh only place-related notes
 

@@ -3,8 +3,8 @@
 @using Ale_Ink.Shared.DTOs
 @using Microsoft.EntityFrameworkCore
 @inject INoteHttpService NoteService
+@inject INoteHttpService NoteHttpService
 @inject IItemHttpService ItemService
-@inject NoteAssignmentService NoteAssignmentService
 @inject HttpClient Http
 
 
@@ -70,7 +70,7 @@
             return;
         }
 
-        await NoteAssignmentService.AssignEntityToNoteAsync(SelectedType, EntityName, Note!.NoteId);
+        await NoteHttpService.AssignNoteToEntityAsync(Note.NoteId, SelectedType, EntityName);
 
         await OnAssignmentSaved.InvokeAsync();
 

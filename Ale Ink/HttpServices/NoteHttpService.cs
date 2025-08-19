@@ -1,4 +1,5 @@
 ﻿using System.Net.Http.Json;
+using Ale_Ink.Shared.DTOs;
 using Ale_Ink.Shared.Models;
 
 namespace Ale_Ink.HttpServices
@@ -118,6 +119,23 @@ namespace Ale_Ink.HttpServices
             else
             {
                 throw new Exception($"Error fetching notes with keyword '{keyword}': {response.ReasonPhrase}");
+            }
+        }
+
+        public async Task AssignNoteToEntityAsync(int noteId, string entityType, string entityName)
+        {
+            var dto = new NoteAssignmentDTO
+            {
+                NoteId = noteId,
+                Type = entityType,
+                Name = entityName
+            };
+
+            var response = await _httpClient.PostAsJsonAsync($"api/Note/assign", dto);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"Error assigning note to {entityType} '{entityName}': {response.ReasonPhrase}");
             }
         }
     }

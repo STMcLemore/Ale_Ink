@@ -12,5 +12,6 @@ namespace Ale_Ink.HttpServices
         Task DeleteNoteAsync(int id);
         Task<List<Note>> GetNotesByKeywordAsync(string keyword);
         Task<List<Note>> GetNotesByItemIdAsync(int itemId);
+        Task AssignNoteToEntityAsync(int noteId, string entityType, string entityName);
     }
 }

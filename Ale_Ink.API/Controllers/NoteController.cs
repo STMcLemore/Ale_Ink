@@ -1,6 +1,8 @@
 ﻿using Ale_Ink.Shared.Models;
 using Ale_Ink.API.Services;
 using Microsoft.AspNetCore.Mvc;
+using Ale_Ink.Shared.DTOs;
+using SQLitePCL;
 
 namespace Ale_Ink.API.Controllers
 {
@@ -9,10 +11,12 @@ namespace Ale_Ink.API.Controllers
     public class NoteController : ControllerBase
     {
         private readonly INoteService _noteService;
+        private readonly INoteAssignmentService _noteAssignmentService;
 
-        public NoteController(INoteService noteService)
+        public NoteController(INoteService noteService, INoteAssignmentService noteAssignmentService)
         {
             _noteService = noteService;
+            _noteAssignmentService = noteAssignmentService;
         }
 
         [HttpGet]
@@ -126,6 +130,11 @@ namespace Ale_Ink.API.Controllers
             }
         }
 
-
+        [HttpPost("assign")]
+        public async Task<IActionResult> AssignNote([FromBody] NoteAssignmentDTO dto)
+        {
+            await _noteAssignmentService.AssignNoteAsync(dto.NoteId, dto.Type, dto.Name);
+            return Ok();
+        }
     }
 }

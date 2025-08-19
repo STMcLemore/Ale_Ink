@@ -4,11 +4,10 @@
 @using Ale_Ink.HttpServices
 @using Ale_Ink.Shared.Models
 @using Ale_Ink.Shared.DTOs
-@inject HttpServices.INoteHttpService NoteService
+@inject HttpServices.INoteHttpService NoteHttpService
 @inject HttpServices.IItemHttpService ItemService
 @inject HttpServices.IPersonHttpService PersonService
 @inject HttpServices.IPlaceHttpService PlaceService
-@inject HttpServices.NoteAssignmentService NoteAssignmentService
 
 
 <NoteListComponent TEntity="Note"
@@ -45,7 +44,7 @@ ShowSidebar="false" />
     {
         try
         {
-            Notes = await NoteService.GetAllNotesAsync();
+            Notes = await NoteHttpService.GetAllNotesAsync();
         }
         catch (Exception ex)
         {
@@ -56,16 +55,16 @@ ShowSidebar="false" />
 
     private async Task SaveAssignment(string type, string name, int noteId)
     {
-        await NoteAssignmentService.AssignEntityToNoteAsync(type, name, noteId);
+        await NoteHttpService.AssignNoteToEntityAsync(noteId, type, name);
 
         await CloseModal();
 
-        Notes = await NoteService.GetAllNotesAsync();
+        Notes = await NoteHttpService.GetAllNotesAsync();
     }
 
     private async Task ReloadNotesFromGrandparent()
     {
-        Notes = await NoteService.GetAllNotesAsync();
+        Notes = await NoteHttpService.GetAllNotesAsync();
 
         StateHasChanged();
     }
@@ -85,11 +84,11 @@ ShowSidebar="false" />
         {
             var newNote = new Note { Content = NewNoteContent, CreatedAt = DateTime.UtcNow };
 
-            await NoteService.AddNoteAsync(newNote);
+            await NoteHttpService.AddNoteAsync(newNote);
 
             NewNoteContent = "";
 
-            Notes = await NoteService.GetAllNotesAsync();
+            Notes = await NoteHttpService.GetAllNotesAsync();
         }
     }
 }

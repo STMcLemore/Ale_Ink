@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DTOs\ItemFromNoteDTO.cs" />
+    <Compile Include="DTOs\NoteAssignmentDTO.cs" />
     <Compile Include="DTOs\PersonFromNoteDTO.cs" />
     <Compile Include="DTOs\PlaceFromNoteDTO.cs" />
     <Compile Include="Models\Item.cs" />
