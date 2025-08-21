@@ -59,21 +59,45 @@ namespace Ale_Ink.API.Services
                 _ => false
             };
 
-            if (!exists)  //todo: fix this method
+            if (!exists)
             {
                 switch (type.ToLower())
                 {
                     case "item":
-                        var note = await _context.Notes
+                        var noteItems = await _context.Notes
                             .Include(n => n.Items)
                             .FirstOrDefaultAsync(n => n.NoteId == noteId);
 
-                        if (note != null)
+                        if (noteItems != null)
                         {
-                            note.Items.Add((Item)existingEntity);
+                            noteItems.Items.Add((Item)existingEntity);
                             await _context.SaveChangesAsync();
                         }
                         break;
+
+                    case "person":
+                        var notePeople = await _context.Notes
+                            .Include(n => n.People)
+                            .FirstOrDefaultAsync(n => n.NoteId == noteId);
+                        if (notePeople != null)
+                        {
+                            notePeople.People.Add((Person)existingEntity);
+                            await _context.SaveChangesAsync();
+                        }
+                        break;
+
+                    case "place":
+                        var notePlaces = await _context.Notes
+                            .Include(n => n.Places)
+                            .FirstOrDefaultAsync(n => n.NoteId == noteId);
+                        if (notePlaces != null)
+                        {
+                            notePlaces.Places.Add((Place)existingEntity);
+                            await _context.SaveChangesAsync();
+                        }
+                        break;
+
+
                 }
             }
         }

@@ -2,9 +2,8 @@
 @using Ale_Ink.Shared.Models
 @using Ale_Ink.Shared.DTOs
 @using Microsoft.EntityFrameworkCore
-@inject INoteHttpService NoteService
 @inject INoteHttpService NoteHttpService
-@inject IItemHttpService ItemService
+@inject IItemHttpService ItemHttpService
 @inject HttpClient Http
 
 
@@ -85,7 +84,7 @@
             return;
         }
 
-        await NoteService.DeleteNoteAsync(noteId);
+        await NoteHttpService.DeleteNoteAsync(noteId);
 
         await OnAssignmentSaved.InvokeAsync();
 

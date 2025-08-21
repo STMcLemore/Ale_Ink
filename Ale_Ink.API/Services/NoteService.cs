@@ -49,17 +49,6 @@ namespace Ale_Ink.API.Services
 
         public async Task DeleteNoteAsync(int id)
         {
-            //var note = _context.Notes.Single(x => x.NoteId == id);
-            //if (note != null)
-            //{
-            //    _context.Notes.Remove(note);
-            //    await _context.SaveChangesAsync();
-            //}
-            //else
-            //{
-            //    throw new InvalidOperationException($"Unable to process the operation.");
-            //}
-
             var note = await _context.Notes
                 .Include(n => n.Items)
                 .Include(n => n.People)
@@ -71,11 +60,54 @@ namespace Ale_Ink.API.Services
                 throw new InvalidOperationException($"Note with ID {id} not found.");
             }
 
-            _context.Items.RemoveRange(note.Items);
-            _context.People.RemoveRange(note.People);
-            _context.Places.RemoveRange(note.Places);
+            // For each item in the note, check if it is linked to other notes
+            foreach (var item in note.Items.ToList())
+            {
+                bool isLinkedToOtherNotes = await _context.Notes
+                    .AnyAsync(n => n.NoteId != id && n.Items.Any(i => i.ItemId == item.ItemId));
+
+                if (!isLinkedToOtherNotes)
+                {
+                    _context.Items.Remove(item); // Remove the item if it is not linked to any other notes
+                }
+
+                else
+                {
+                    note.Items.Remove(item);  // Remove the item from the note, but keep it in the database
+                }
+            }
+
+            // Do the same for people and places
+            foreach (var person in note.People.ToList())
+            {
+                bool isLinkedToOtherNotes = await _context.Notes
+                    .AnyAsync(n => n.NoteId != id && n.People.Any(p => p.PersonId == person.PersonId));
+                if (!isLinkedToOtherNotes)
+                {
+                    _context.People.Remove(person); // Remove the person if it is not linked to any other notes
+                }
+                else
+                {
+                    note.People.Remove(person);  // Remove the person from the note, but keep it in the database
+                }
+            }
+
+            foreach (var place in note.Places.ToList())
+            {
+                bool isLinkedToOtherNotes = await _context.Notes
+                    .AnyAsync(n => n.NoteId != id && n.Places.Any(p => p.PlaceId == place.PlaceId));
+                if (!isLinkedToOtherNotes)
+                {
+                    _context.Places.Remove(place); // Remove the place if it is not linked to any other notes
+                }
+                else
+                {
+                    note.Places.Remove(place);  // Remove the place from the note, but keep it in the database
+                }
+            }
 
             _context.Notes.Remove(note);
+
             await _context.SaveChangesAsync();
 
         }
