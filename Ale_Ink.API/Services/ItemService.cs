@@ -41,16 +41,6 @@ namespace Ale_Ink.API.Services
 
         public async Task UpdateItemAsync(int id, Item updatedItem)
         {
-            //if (_context.Items.Any(x => x.ItemId == id))
-            //{
-            //    _context.Items.Update(item);
-            //    await _context.SaveChangesAsync();
-            //}
-            //else
-            //{
-            //    throw new InvalidOperationException($"Unable to process the operation.");
-            //}
-
             var existingItem = await _context.Items
                 .Include(i => i.Notes)
                 .FirstOrDefaultAsync(i => i.ItemId == id);

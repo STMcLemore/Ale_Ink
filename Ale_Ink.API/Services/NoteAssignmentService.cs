@@ -61,43 +61,27 @@ namespace Ale_Ink.API.Services
 
             if (!exists)
             {
-                switch (type.ToLower())
+                var note = await _context.Notes
+                    .Include(n => n.Items)
+                    .Include(n => n.People)
+                    .Include(n => n.Places)
+                    .FirstOrDefaultAsync(n => n.NoteId == noteId);
+
+                if (note != null)
                 {
-                    case "item":
-                        var noteItems = await _context.Notes
-                            .Include(n => n.Items)
-                            .FirstOrDefaultAsync(n => n.NoteId == noteId);
-
-                        if (noteItems != null)
-                        {
-                            noteItems.Items.Add((Item)existingEntity);
-                            await _context.SaveChangesAsync();
-                        }
-                        break;
-
-                    case "person":
-                        var notePeople = await _context.Notes
-                            .Include(n => n.People)
-                            .FirstOrDefaultAsync(n => n.NoteId == noteId);
-                        if (notePeople != null)
-                        {
-                            notePeople.People.Add((Person)existingEntity);
-                            await _context.SaveChangesAsync();
-                        }
-                        break;
-
-                    case "place":
-                        var notePlaces = await _context.Notes
-                            .Include(n => n.Places)
-                            .FirstOrDefaultAsync(n => n.NoteId == noteId);
-                        if (notePlaces != null)
-                        {
-                            notePlaces.Places.Add((Place)existingEntity);
-                            await _context.SaveChangesAsync();
-                        }
-                        break;
-
-
+                    switch (type.ToLower())
+                    {
+                        case "item":
+                            note.Items.Add((Item)existingEntity);
+                            break;
+                        case "person":
+                            note.People.Add((Person)existingEntity);
+                            break;
+                        case "place":
+                            note.Places.Add((Place)existingEntity);
+                            break;
+                    }
+                    await _context.SaveChangesAsync();
                 }
             }
         }
