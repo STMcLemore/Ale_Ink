@@ -25,10 +25,10 @@
                     <div class="note-card-wrapper">
                         <!-- Floating action button -->
                         <MudIconButton Icon="@Icons.Material.Filled.Add"
-                                       Color="Color.Primary"
-                                       Size="Size.Small"
-                                       Class="note-action-button"
-                                       OnClick="() => OnNoteAction(note)" />
+                        Color="Color.Primary"
+                        Size="Size.Small"
+                        Class="note-action-button"
+                        OnClick="() => OnNoteAction(note)" />
 
                         <!-- Note Card -->
                         <MudCard Outlined="true" Class="note-card" Style="width:1300px; position:relative;">
@@ -41,9 +41,18 @@
                             <MudCardContent>      
                                 <div style="position:absolute; top:8px; right:8px;">
                                     <MudStack Row Spacing="1" Justify="Justify.FlexEnd" AlignItems="AlignItems.Center">
-                                        <MudChip T="string" Color="Color.Error" Variant="Variant.Filled" Size="Size.Small">Item</MudChip>
-                                        <MudChip T="string" Color="Color.Success" Variant="Variant.Filled" Size="Size.Small">Person</MudChip>
-                                        <MudChip T="string" Color="Color.Warning" Variant="Variant.Filled" Size="Size.Small">Place</MudChip>
+                                        @if (note.Items?.Any() == true)
+                                        {
+                                            <MudChip T="string" Color="Color.Error" Variant="Variant.Text" Size="Size.Small">Item</MudChip>
+                                        }
+                                        @if (note.People?.Any() == true)
+                                        {
+                                            <MudChip T="string" Color="Color.Success" Variant="Variant.Text" Size="Size.Small">Person</MudChip>
+                                        }
+                                        @if (note.Places?.Any() == true)
+                                        {
+                                            <MudChip T="string" Color="Color.Warning" Variant="Variant.Text" Size="Size.Small">Place</MudChip>
+                                        }
                                     </MudStack>
                                 </div>
 

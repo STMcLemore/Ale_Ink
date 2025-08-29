@@ -21,16 +21,8 @@
                     </div>
                     <div class="modal-body">
 
-                        @* <input class="form-control mb-2" @bind="EntityName" placeholder="Enter name..." /> *@
                         <MudTextField Label="Enter Name" HelperText="Max. 8 characters"
                                       @bind-Value="EntityName" For="@(() => EntityName)" />
-
-                        @* <select class="form-select mb-2" @bind="SelectedType">
-                            <option value="">Select type</option>
-                            <option value="Person">Person</option>
-                            <option value="Item">Item</option>
-                            <option value="Place">Place</option>
-                        </select> *@
 
                         <MudSelect @bind-Value="SelectedType" Placeholder="Select Type" AdornmentColor="Color.Dark">
                             <MudSelectItem Value="@("Person")">Person</MudSelectItem>
