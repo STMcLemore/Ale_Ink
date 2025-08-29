@@ -8,9 +8,9 @@
 @typeparam TEntity
 
 <div class="page-wrapper">
-    <div class="header">
+    @* <div class="header">
         <h3>@Title Notes</h3>
-    </div>
+    </div> *@
 
     <NoteAssignmentModal @ref="noteAssignmentModalRef"
                          Note="NoteToAssign"
@@ -22,49 +22,68 @@
             <div class="notes-list">
                 @foreach (var note in FilteredNotes)
                 {
-                    <div class="note-box-wrapper">
-                        <button class="note-action-button" @onclick="() => OnNoteAction(note)">+</button>
-                        <div class="note-box">
-                            <div class="note-header">
-                                <div class="note-timestamp">@note.CreatedAt.ToString("g")</div>
-                                <div class="note-category-row">
-                                    @if (note.Items?.Any() == true)
-                                    {
-                                        <span class="note-category item">Item</span>
-                                    }
-                                    @if (note.People?.Any() == true)
-                                    {
-                                        <span class="note-category person">Person</span>
-                                    }
-                                    @if (note.Places?.Any() == true)
-                                    {
-                                        <span class="note-category place">Place</span>
-                                    }
+                    <div class="note-card-wrapper">
+                        <!-- Floating action button -->
+                        <MudIconButton Icon="@Icons.Material.Filled.Add"
+                                       Color="Color.Primary"
+                                       Size="Size.Small"
+                                       Class="note-action-button"
+                                       OnClick="() => OnNoteAction(note)" />
+
+                        <!-- Note Card -->
+                        <MudCard Outlined="true" Class="note-card" Style="width:1300px; position:relative;">
+                            <MudCardHeader>
+                                <MudText Typo="Typo.caption" Class="text-muted">
+                                    @note.CreatedAt.ToString("g")
+                                </MudText>
+                            </MudCardHeader>
+
+                            <MudCardContent>      
+                                <div style="position:absolute; top:8px; right:8px;">
+                                    <MudStack Row Spacing="1" Justify="Justify.FlexEnd" AlignItems="AlignItems.Center">
+                                        <MudChip T="string" Color="Color.Error" Variant="Variant.Filled" Size="Size.Small">Item</MudChip>
+                                        <MudChip T="string" Color="Color.Success" Variant="Variant.Filled" Size="Size.Small">Person</MudChip>
+                                        <MudChip T="string" Color="Color.Warning" Variant="Variant.Filled" Size="Size.Small">Place</MudChip>
+                                    </MudStack>
                                 </div>
-                            </div>
-                            <div class="note-content">@note.Content</div>
-                        </div>
+
+
+                                <MudText Typo="Typo.body1">
+                                    @note.Content
+                                </MudText>
+                            </MudCardContent>
+                        </MudCard>
                     </div>
+
+
                 }
             </div>
         </div>
 
         @if (ShowSidebar)
         {
-            <div class="item-sidebar">
-                <h5>@Title List</h5>
-                <ul class="list-unstyled">
+            <MudPaper Width="300px" Class="pa-4 mud-dark-paper">
+                <MudText Typo="Typo.h6">@Title List</MudText>
+
+                <MudList T="string" Dense="true">
                     @foreach (var entity in Entities)
                     {
-                        <li>
-                            <button class="btn btn-link text-start w-100" @onclick="() => FilterByEntity(entity)">
-                                @GetEntityName(entity)
-                            </button>
-                        </li>
+                        <MudListItem T="string"
+                                     Text="@GetEntityName(entity)"
+                                     OnClick="() => FilterByEntity(entity)" />
                     }
-                </ul>
-                <button class="btn btn-sm btn-secondary mt-2" @onclick="ClearFilter">Clear Filter</button>
-            </div>
+                </MudList>
+
+                <MudDivider Class="my-2 sidebar-dark-divider" />
+
+                <MudButton Variant="Variant.Outlined"
+                           Color="Color.Primary"
+                           Size="Size.Small"
+                           OnClick="ClearFilter">
+                    Clear Filter
+                </MudButton>
+            </MudPaper>
+
          }
     </div>
 </div> 

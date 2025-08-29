@@ -2,41 +2,52 @@
 @using Ale_Ink.Shared.Models
 @using Ale_Ink.Shared.DTOs
 @using Microsoft.EntityFrameworkCore
+@using FluentValidation
 @inject INoteHttpService NoteHttpService
 @inject IItemHttpService ItemHttpService
 @inject HttpClient Http
 
 
+
 @if (IsVisible)
 {
-    <div class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Assign Note</h5>
-                    <button type="button" class="btn-close" @onclick="Hide"></button>
-                </div>
-                <div class="modal-body">
-                    <p><strong>Note:</strong> @Note?.Content</p>
+    <div class="modal-backdrop-custom">
+        <div class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Assign Note</h5>
+                        <button type="button" class="btn-close" @onclick="Hide"></button>
+                    </div>
+                    <div class="modal-body">
 
-                    <input class="form-control mb-2" @bind="EntityName" placeholder="Enter name..." />
+                        @* <input class="form-control mb-2" @bind="EntityName" placeholder="Enter name..." /> *@
+                        <MudTextField Label="Enter Name" HelperText="Max. 8 characters"
+                                      @bind-Value="EntityName" For="@(() => EntityName)" />
 
-                    <select class="form-select mb-2" @bind="SelectedType">
-                        <option value="">Select type</option>
-                        <option value="Person">Person</option>
-                        <option value="Item">Item</option>
-                        <option value="Place">Place</option>
-                    </select>
+                        @* <select class="form-select mb-2" @bind="SelectedType">
+                            <option value="">Select type</option>
+                            <option value="Person">Person</option>
+                            <option value="Item">Item</option>
+                            <option value="Place">Place</option>
+                        </select> *@
 
-                    @if (!string.IsNullOrEmpty(ErrorMessage))
-                    {
-                        <div class="text-danger">@ErrorMessage</div>
-                    }
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-danger" @onclick="() =>DeleteNote(Note.NoteId)">Delete Note</button>
-                    <button class="btn btn-secondary" @onclick="Hide">Cancel</button>
-                    <button class="btn btn-primary" @onclick="SaveAssignment">Assign</button>
+                        <MudSelect @bind-Value="SelectedType" Placeholder="Select Type" AdornmentColor="Color.Dark">
+                            <MudSelectItem Value="@("Person")">Person</MudSelectItem>
+                            <MudSelectItem Value="@("Item")">Item</MudSelectItem>
+                            <MudSelectItem Value="@("Place")">Place</MudSelectItem>
+                        </MudSelect>
+
+                        @if (!string.IsNullOrEmpty(ErrorMessage))
+                        {
+                            <div class="text-danger">@ErrorMessage</div>
+                        }
+                    </div>
+                    <div class="modal-footer">
+                        <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" @onclick="() =>DeleteNote(Note.NoteId)">Delete</MudButton>
+                        <button class="btn btn-secondary" @onclick="Hide">Cancel</button>
+                        <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Save" Color="Color.Info" @onclick="SaveAssignment">Save</MudButton>
+                    </div>
                 </div>
             </div>
         </div>

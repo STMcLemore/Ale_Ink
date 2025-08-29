@@ -21,11 +21,30 @@ SelectedFilter="@SelectedFilter"
 SelectedFilterChanged="@(value => SelectedFilter = value)" 
 ShowSidebar="false" />
 
-<div class="note-input">
+@* <div class="note-input">
     <textarea @bind="NewNoteContent" rows="3" placeholder="Enter your note here..."></textarea>
     <br />
     <button class="btn btn-primary mt-2" @onclick="SubmitNote">Add Note</button>
+</div> *@
+
+<div style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 1500px; z-index: 1000;">
+    <MudPaper Class="pa-4" Elevation="4">
+        <MudTextField @bind-Value="NewNoteContent"
+                      Placeholder="Enter your note here..."
+                      Lines="3"
+                      TextArea="true"
+                      Variant="Variant.Outlined"
+                      FullWidth="true" />
+
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   Class="mt-2"
+                   OnClick="SubmitNote">
+            Add Note
+        </MudButton>
+    </MudPaper>
 </div>
+
 
 
 @code {

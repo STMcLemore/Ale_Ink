@@ -10,23 +10,22 @@
 <!-- Needed for snackbars -->
 <MudSnackbarProvider />
 
-<MudLayout>
+<MudLayout style="background-color:  #f5f8fb">
     <MudAppBar Elevation="1">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         <MudText Typo="Typo.h5" Class="ml-3">Ale Ink</MudText>
         <MudSpacer />
     </MudAppBar>
 
-    @* <MudPaper Height="200px" Style="overflow:hidden; position:relative;"> *@
-        <MudDrawerContainer Class="mud-height-full">
+    
+        <MudDrawerContainer Color="Color.Dark">
             <MudDrawer @bind-Open="@_drawerOpen" Elevation="0" Variant="@DrawerVariant.Persistent" Color="Color.Dark">
                 <MudDrawerHeader>
-                    <MudText Typo="Typo.h6">My App</MudText>
+                    <MudText Typo="Typo.h6">Notes Menu</MudText>
                 </MudDrawerHeader>
                 <MudNav />
             </MudDrawer>
         </MudDrawerContainer>
-    @* </MudPaper> *@
     <MudMainContent>
             <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
                 @Body
@@ -42,18 +41,6 @@
         _drawerOpen = !_drawerOpen;
     }
 }
-
-@* <div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
-    <main>
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div> *@
 
 
 
