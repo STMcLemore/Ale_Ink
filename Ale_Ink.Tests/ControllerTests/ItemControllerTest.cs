@@ -69,22 +69,6 @@ public sealed class ItemControllerTest
         Assert.IsInstanceOfType(result.Result, typeof(NotFoundObjectResult));
     }
 
-    //[TestMethod]
-    //public async Task PostItem_ValidItem_ReturnsOk()
-    //{
-    //    // Arrange
-    //    var item = new Item { ItemId = 1, Name = "Test Item" };
-    //    _mockService.Setup(service => service.AddItemAsync(item)).ReturnsAsync(item);
-
-    //    // Act
-    //    var result = await _controller.AddItem(item);
-
-    //    // Assert
-    //    var okResult = result.Result as OkObjectResult;
-    //    Assert.IsNotNull(okResult);
-    //    Assert.AreEqual(item, okResult.Value);
-    //}
-
     [TestMethod]
     public async Task AddItemFromNote_ReturnsOk_WithCreatedItem()
     {
@@ -107,19 +91,6 @@ public sealed class ItemControllerTest
         Assert.IsNotNull(returnedItem);
         Assert.AreEqual("Sting", returnedItem.Name);
     }
-
-    //[TestMethod]
-    //public async Task PostItem_NullItem_ReturnsBadRequest()
-    //{
-    //    // Arrange
-    //    Item item = null;
-
-    //    // Act
-    //    var result = await _controller.AddItem(item);
-
-    //    // Assert
-    //    Assert.IsInstanceOfType(result.Result, typeof(BadRequestObjectResult));
-    //}
 
     [TestMethod]
     public async Task UpdateItem_IdMismatch_ReturnsBadRequest()

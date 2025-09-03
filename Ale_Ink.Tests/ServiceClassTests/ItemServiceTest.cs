@@ -75,23 +75,6 @@ public sealed class ItemServiceTest
         Assert.IsNull(result);
     }
 
-    //[TestMethod]
-    //public async Task AddItemAsync_AddsNewItem()
-    //{
-    //    // Arrange
-    //    var mockContext = GetMockedDbContext();
-    //    var service = new ItemService(mockContext);
-    //    var newItem = new Item { Name = "New Test Item" };
-
-    //    // Act
-    //    var result = await service.AddItemAsync(newItem);
-
-    //    // Assert
-    //    Assert.IsNotNull(result);
-    //    Assert.AreEqual("New Test Item", result.Name);
-    //    Assert.AreEqual(1, mockContext.Items.Count());
-    //}
-
     [TestMethod]
     public async Task AddItemFromNoteAsync_ValidDto_AddsItemLinkedToNote()
     {
