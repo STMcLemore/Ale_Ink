@@ -167,10 +167,18 @@ button {
 
 
 <style >
+html, body {
+    height: 100%; /* base full height */
+    min-height: 100%; /* allow scrolling */
+    margin: 0;
+    padding: 0;
+    background-color: var(--mud-palette-background); /* full-page background */
+}
+
 .page-wrapper {
+    min-height: 100%; /* allow scrolling */
     display: flex;
     flex-direction: column;
-    height: 100vh;
     box-sizing: border-box;
 }
 
@@ -304,6 +312,21 @@ button {
     .mud-dark-paper .mud-divider {
         border-color: rgba(255,255,255,0.2) !important;
     }
+
+.notes-wrapper {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.sidebar-wrapper {
+    position: absolute;
+    top: 80px; /* adjust based on your header */
+    right: 20px;
+    z-index: 100; /* ensure it sits above notes */
+}
+
+
 
 
 </style >

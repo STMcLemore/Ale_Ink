@@ -25,4 +25,8 @@
     <ProjectReference Include="..\Ale_Ink.Shared\Ale_Ink.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\Images\" />
+  </ItemGroup>
+
 </Project>
