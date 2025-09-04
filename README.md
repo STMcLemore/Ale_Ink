@@ -1,6 +1,4 @@
-# Ale Ink
-
-Ale Ink is a work in progress project.
+## Ale Ink is a work in progress project.
 
 # Ale Ink – Note Management App  
 
