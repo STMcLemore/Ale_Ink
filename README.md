@@ -11,7 +11,7 @@ Ale Ink is a work in progress project.
 
 Click the green code button at the top of this page and copy the URL into Visual Studio to clone the repository.
 
-3. Restore NuGet packages
+2. Restore NuGet packages
 
 Right-click on the solution in Solution Explorer → Restore NuGet Packages.
 
