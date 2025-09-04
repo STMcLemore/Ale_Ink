@@ -7,35 +7,35 @@
 ## How to run this app
 1. Clone the repository
 
-Click the green code button at the top of this page and copy the URL into Visual Studio to clone the repository.
+   Click the green code button at the top of this page and copy the URL into Visual Studio to clone the repository.
 
 2. Restore NuGet packages
 
-Right-click on the solution in Solution Explorer → Restore NuGet Packages.
+   Right-click on the solution in Solution Explorer → Restore NuGet Packages.
 
-Ensure all projects build successfully.
+   Ensure all projects build successfully.
 
 3. Configure multiple startup projects
 
-Right-click the solution → Properties.
+   Right-click the solution → Properties.
 
-In the Startup Project section, select Multiple startup projects.
+   In the Startup Project section, select Multiple startup projects.
 
-Set the Action column for:
+   Set the Action column for:
 
-Ale_Ink.API → Start
+   Ale_Ink.API → Start
 
-Ale_Ink → Start
+   Ale_Ink → Start
 
-Click Apply → OK.
+   Click Apply → OK.
 
 4. Run the application
 
-Press F5 or click Start.
+   Press F5 or click Start.
 
-Both the API and Blazor app will launch.
+   Both the API and Blazor app will launch.
 
-The Blazor app should open in your browser automatically.
+   The Blazor app should open in your browser automatically.
 
 ## Key Features  
 - Create, edit, and delete notes with real-time form validation.  
