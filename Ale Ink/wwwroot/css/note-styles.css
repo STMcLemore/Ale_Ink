@@ -124,22 +124,6 @@ button {
     box-sizing: border-box;
 }
 
-.note-action-button {
-    position: absolute;
-    top: -5px;
-    left: -28px;
-    width: 28px;
-    height: 27px;
-    background-color: #e0e0e0;
-    border: 1px solid #bbb;
-    border-radius: 4px;
-    font-weight: bold;
-    color: #333;
-    cursor: pointer;
-    box-shadow: 1px 1px 4px rgba(0,0,0,0.1);
-    transition: background-color 0.2s ease;
-}
-
     .note-action-button:hover {
         background-color: #d4d4d4;
     }
@@ -257,8 +241,8 @@ button {
 
 .note-action-button {
     position: absolute;
-    top: 25px; /* adjust so it “overlaps” the card edge */
-    left: -30px;
+    top: 27px; /* adjust so it “overlaps” the card edge */
+    left: -25px;
     z-index: 5;
     background-color: white; /* optional: circle background */
     border-radius: 50%;

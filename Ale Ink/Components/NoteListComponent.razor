@@ -3,96 +3,7 @@
 @using Ale_Ink.Shared.DTOs
 @inject HttpServices.INoteHttpService NoteService
 
-
-
 @typeparam TEntity
-
-@* <div class="page-wrapper">
-
-    <NoteAssignmentModal @ref="noteAssignmentModalRef"
-                         Note="NoteToAssign"
-                         OnAssignmentSaved="ReloadNotes"
-                         OnClose="CloseModal" />
-
-    <div class="main-content">
-        <div class="notes-section">
-            <div class="notes-list">
-                @foreach (var note in FilteredNotes)
-                {
-                    <div class="note-card-wrapper">
-                        <!-- Floating action button -->
-                        <MudIconButton Icon="@Icons.Material.Filled.Add"
-                        Color="Color.Primary"
-                        Size="Size.Small"
-                        Class="note-action-button"
-                        OnClick="() => OnNoteAction(note)" />
-
-                        <!-- Note Card -->
-                        <MudCard Outlined="true" Class="note-card" Style="width:1300px; position:relative;">
-                            <MudCardHeader>
-                                <MudText Typo="Typo.caption" Class="text-muted">
-                                    @note.CreatedAt.ToString("g")
-                                </MudText>
-                            </MudCardHeader>
-
-                            <MudCardContent>      
-                                <div style="position:absolute; top:8px; right:8px;">
-                                    <MudStack Row Spacing="1" Justify="Justify.FlexEnd" AlignItems="AlignItems.Center">
-                                        @if (note.Items?.Any() == true)
-                                        {
-                                            <MudChip T="string" Color="Color.Error" Variant="Variant.Text" Size="Size.Small">Item</MudChip>
-                                        }
-                                        @if (note.People?.Any() == true)
-                                        {
-                                            <MudChip T="string" Color="Color.Success" Variant="Variant.Text" Size="Size.Small">Person</MudChip>
-                                        }
-                                        @if (note.Places?.Any() == true)
-                                        {
-                                            <MudChip T="string" Color="Color.Warning" Variant="Variant.Text" Size="Size.Small">Place</MudChip>
-                                        }
-                                    </MudStack>
-                                </div>
-
-
-                                <MudText Typo="Typo.body1">
-                                    @note.Content
-                                </MudText>
-                            </MudCardContent>
-                        </MudCard>
-                    </div>
-
-
-                }
-            </div>
-        </div>
-
-        @if (ShowSidebar)
-        {
-            <MudPaper Width="200px" Class="pa-4 mud-dark-paper">
-                <MudText Typo="Typo.h6">@Title List</MudText>
-
-                <MudList T="string" Dense="true">
-                    @foreach (var entity in Entities)
-                    {
-                        <MudListItem T="string"
-                                     Text="@GetEntityName(entity)"
-                                     OnClick="() => FilterByEntity(entity)" />
-                    }
-                </MudList>
-
-                <MudDivider Class="my-2 sidebar-dark-divider" />
-
-                <MudButton Variant="Variant.Outlined"
-                           Color="Color.Primary"
-                           Size="Size.Small"
-                           OnClick="ClearFilter">
-                    Clear Filter
-                </MudButton>
-            </MudPaper>
-
-         }
-    </div>
-</div>  *@
 
 <div class="page-wrapper">
     <NoteAssignmentModal @ref="noteAssignmentModalRef"
@@ -106,7 +17,7 @@
             @foreach (var note in FilteredNotes)
             {
                 <div class="note-card-wrapper">
-                    <MudIconButton Icon="@Icons.Material.Filled.Add"
+                    <MudIconButton Icon="@Icons.Material.Rounded.Edit"
                                    Color="Color.Primary"
                                    Size="Size.Small"
                                    Class="note-action-button"
