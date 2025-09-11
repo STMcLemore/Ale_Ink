@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "Feature Profile",
+    "Projects": [
+      {
+        "Path": "Ale_Ink.API\\Ale_Ink.API.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Ale Ink\\Ale_Ink.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]
